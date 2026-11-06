@@ -3,26 +3,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d1b">
 <title>NOVA AI — Your AI. Your World.</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#080d1b;--panel:#10182b;--panel2:#1a2741;--blue:#3985ff;--text:#f3f6ff;--muted:#94a3bd;--border:rgba(255,255,255,.09)}
+:root{--bg:#080d1b;--panel:#10182b;--blue:#3985ff;--text:#f3f6ff;--muted:#94a3bd;--border:rgba(255,255,255,.09)}
 body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text);height:100dvh;overflow:hidden}
 button{font:inherit;cursor:pointer}
-.app{height:100dvh;display:flex;overflow:hidden}
+.app{height:100dvh;display:flex}
 .sidebar{width:270px;background:#0c1425;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 14px;flex-shrink:0;z-index:30}
 .logo{display:flex;align-items:center;gap:11px;padding:5px 8px 25px}
-.logo-mark,.welcome-logo{background:linear-gradient(135deg,#3985ff,#1550cf);display:grid;place-items:center;font-weight:800;box-shadow:0 0 22px #3985ff44}
+.logo-mark,.welcome-logo{background:linear-gradient(135deg,#3985ff,#1550cf);display:grid;place-items:center;font-weight:800}
 .logo-mark{width:38px;height:38px;border-radius:12px;font-size:23px}
-.logo-name{font-size:20px;font-weight:800;letter-spacing:1px}
+.logo-name{font-size:20px;font-weight:800}
 .logo-name span,.welcome h1 span{color:var(--blue)}
-.new-chat{background:var(--blue);color:white;border:0;border-radius:12px;padding:13px;font-weight:700;width:100%;margin-bottom:25px}
-.section-label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1.5px;padding:0 10px 12px}
+.new-chat{background:var(--blue);color:white;border:0;border-radius:12px;padding:13px;font-weight:700;margin-bottom:25px}
+.section-label{color:var(--muted);font-size:11px;text-transform:uppercase;padding:0 10px 12px}
 .history{overflow-y:auto;flex:1}
 .history-item{padding:12px 11px;border-radius:9px;color:#c4cee1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.history-item:hover{background:var(--panel2)}
+.history-item:hover{background:#1a2741}
 .sidebar-bottom{border-top:1px solid var(--border);padding-top:15px;color:var(--muted);font-size:13px}
 .sidebar-bottom div{padding:10px}
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
@@ -31,7 +32,7 @@ button{font:inherit;cursor:pointer}
 .header-title{font-weight:650;font-size:15px}
 .header-sub{font-size:11px;color:var(--muted);margin-top:3px}
 .online-dot{width:7px;height:7px;border-radius:50%;background:#42d99a;display:inline-block;margin-right:5px}
-.chat-area{flex:1;overflow-y:auto;padding:35px 20px 20px}
+.chat-area{flex:1;overflow-y:auto;padding:35px 20px 20px;scroll-behavior:smooth}
 .welcome{max-width:650px;margin:10vh auto 35px;text-align:center}
 .welcome-logo{width:65px;height:65px;border-radius:21px;margin:0 auto 20px;font-size:35px}
 .welcome h1{font-size:29px;margin-bottom:10px}
@@ -39,27 +40,29 @@ button{font:inherit;cursor:pointer}
 .suggestions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:25px}
 .suggestion{background:var(--panel);border:1px solid var(--border);color:#dce6fa;padding:11px 14px;border-radius:12px;font-size:12px}
 .messages{max-width:800px;margin:auto}
-.message{display:flex;margin:22px 0;gap:11px;align-items:flex-start}
+.message{display:flex;margin:25px 0;gap:11px;align-items:flex-start;animation:messageIn .25s ease}
+@keyframes messageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 .message.user{justify-content:flex-end}
-.avatar{width:30px;height:30px;flex-shrink:0;border-radius:10px;background:var(--blue);display:grid;place-items:center;font-weight:800}
-.bubble{max-width:min(78%,620px);padding:13px 16px;border-radius:15px;font-size:14px;line-height:1.7;overflow-wrap:anywhere;white-space:pre-wrap}
+.avatar{width:31px;height:31px;flex-shrink:0;border-radius:10px;background:var(--blue);display:grid;place-items:center;font-weight:800}
+.bubble{max-width:min(80%,650px);padding:13px 16px;border-radius:15px;font-size:14px;line-height:1.8;overflow-wrap:anywhere;white-space:pre-wrap}
 .assistant .bubble{background:var(--panel);border:1px solid var(--border);border-top-left-radius:4px}
 .user .bubble{background:#174d9e;border-top-right-radius:4px}
 .bubble img{max-width:220px;max-height:220px;border-radius:10px;display:block;margin-bottom:8px}
-.thinking{display:flex;align-items:center;gap:5px;color:var(--muted)}
-.thinking span{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulse 1s infinite}
-.thinking span:nth-child(2){animation-delay:.15s}
-.thinking span:nth-child(3){animation-delay:.3s}
+.thinking{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:13px}
+.dots{display:flex;gap:5px}
+.dots span{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulse 1s infinite}
+.dots span:nth-child(2){animation-delay:.15s}
+.dots span:nth-child(3){animation-delay:.3s}
 @keyframes pulse{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
 .composer-wrap{padding:12px 20px 20px;flex-shrink:0}
 .composer{max-width:800px;margin:auto;background:var(--panel);border:1px solid #263653;border-radius:17px;padding:12px}
 .composer textarea{width:100%;resize:none;outline:none;border:0;background:transparent;color:white;font:14px Arial;min-height:35px;max-height:120px;padding:7px;line-height:1.5}
 .composer textarea::placeholder{color:#8190aa}
 .composer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:7px}
-.tools{display:flex;gap:8px}
 .tool-btn{background:transparent;color:var(--muted);border:0;border-radius:9px;padding:8px 10px;font-size:20px}
 .send-btn{background:var(--blue);border:0;color:white;border-radius:10px;padding:9px 17px;font-weight:700}
-.preview{display:none;align-items:center;gap:10px;padding:8px;margin-bottom:8px;background:var(--panel2);border-radius:10px;font-size:12px;color:var(--muted)}
+.send-btn:disabled{opacity:.5;cursor:not-allowed}
+.preview{display:none;align-items:center;gap:10px;padding:8px;margin-bottom:8px;background:#1a2741;border-radius:10px;font-size:12px;color:var(--muted)}
 .preview img{width:48px;height:48px;object-fit:cover;border-radius:7px}
 .remove-image{background:transparent;color:#ff8c8c;border:0;margin-left:auto;padding:8px}
 .footer-note{text-align:center;color:#64718b;font-size:10px;margin-top:10px}
@@ -71,7 +74,6 @@ button{font:inherit;cursor:pointer}
 .attach-option{display:flex;align-items:center;gap:13px;padding:13px 10px;border-radius:10px;width:100%;border:0;background:transparent;color:white;text-align:left}
 .attach-option:hover{background:#263653}
 .attach-icon{width:37px;height:37px;border-radius:11px;background:#263d62;display:grid;place-items:center;font-size:19px}
-.attach-option small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
 @media(max-width:700px){
 .sidebar{position:fixed;left:0;top:0;bottom:0;height:100dvh;width:min(290px,82vw);transform:translateX(-105%);transition:transform .28s ease;box-shadow:15px 0 45px #0005}
 .sidebar.open{transform:translateX(0)}
@@ -84,58 +86,74 @@ button{font:inherit;cursor:pointer}
 }
 </style>
 </head>
+
 <body>
 <div class="app">
+
 <aside class="sidebar" id="sidebar">
-<div class="logo"><div class="logo-mark">N</div><div class="logo-name">NOVA <span>AI</span></div></div>
-<button class="new-chat" onclick="newChat()">＋ New Chat</button>
-<div class="section-label">Recent Chats</div>
-<div class="history" id="history"></div>
-<div class="sidebar-bottom"><div>⚙️ Settings</div><div>👤 Account</div><div>Your AI. Your World.</div></div>
+  <div class="logo">
+    <div class="logo-mark">N</div>
+    <div class="logo-name">NOVA <span>AI</span></div>
+  </div>
+  <button class="new-chat" onclick="newChat()">＋ New Chat</button>
+  <div class="section-label">Recent Chats</div>
+  <div class="history" id="history"></div>
+  <div class="sidebar-bottom">
+    <div>⚙️ Settings</div>
+    <div>👤 Account</div>
+    <div>Your AI. Your World.</div>
+  </div>
 </aside>
 
 <div class="overlay" id="overlay"></div>
 
 <main class="main">
 <header class="header">
-<button class="menu-btn" id="menuButton">☰</button>
-<div><div class="header-title">NOVA AI</div><div class="header-sub"><span class="online-dot"></span>Your AI assistant</div></div>
+  <button class="menu-btn" id="menuButton">☰</button>
+  <div>
+    <div class="header-title">NOVA AI</div>
+    <div class="header-sub"><span class="online-dot"></span>Your AI assistant</div>
+  </div>
 </header>
 
 <section class="chat-area" id="chatArea">
-<div class="welcome" id="welcome">
-<div class="welcome-logo">N</div>
-<h1>What can I help <span>you with?</span></h1>
-<p>Welcome to NOVA AI. Ask questions, explore ideas and discover what's possible. I'm here to help you think, learn and create.</p>
-<div class="suggestions">
-<button class="suggestion" onclick="useSuggestion('Explain something to me step by step')">📚 Learn something</button>
-<button class="suggestion" onclick="useSuggestion('Help me write something creative')">✍️ Write something</button>
-<button class="suggestion" onclick="useSuggestion('Help me understand a difficult problem')">💡 Solve a problem</button>
-<button class="suggestion" onclick="useSuggestion('Give me some creative ideas')">✨ Get ideas</button>
-</div>
-</div>
-<div class="messages" id="messages"></div>
+  <div class="welcome" id="welcome">
+    <div class="welcome-logo">N</div>
+    <h1>What can I help <span>you with?</span></h1>
+    <p>Welcome to NOVA AI. Ask questions, explore ideas and discover what's possible. I'm here to help you think, learn and create.</p>
+    <div class="suggestions">
+      <button class="suggestion" onclick="useSuggestion('Explain something to me step by step')">📚 Learn something</button>
+      <button class="suggestion" onclick="useSuggestion('Help me write something creative')">✍️ Write something</button>
+      <button class="suggestion" onclick="useSuggestion('Help me understand a difficult problem')">💡 Solve a problem</button>
+      <button class="suggestion" onclick="useSuggestion('Give me some creative ideas')">✨ Get ideas</button>
+    </div>
+  </div>
+  <div class="messages" id="messages"></div>
 </section>
 
 <div class="composer-wrap">
-<div class="composer">
-<div class="preview" id="preview"><img id="previewImage" alt="Preview"><span id="previewName"></span><button class="remove-image" onclick="removeAttachment()">✕ Remove</button></div>
-<textarea id="messageInput" rows="1" placeholder="Message NOVA AI..."></textarea>
-<div class="composer-bottom">
-<div class="tools"><button type="button" class="tool-btn" id="attachButton" aria-label="Open attachments">＋</button></div>
-<button type="button" class="send-btn" id="sendButton">Send ↑</button>
-</div>
-</div>
-<div class="footer-note">NOVA AI can make mistakes. Check important information.</div>
+  <div class="composer">
+    <div class="preview" id="preview">
+      <img id="previewImage" alt="Preview">
+      <span id="previewName"></span>
+      <button class="remove-image" onclick="removeAttachment()">✕ Remove</button>
+    </div>
+    <textarea id="messageInput" rows="1" placeholder="Message NOVA AI..."></textarea>
+    <div class="composer-bottom">
+      <button type="button" class="tool-btn" id="attachButton">＋</button>
+      <button type="button" class="send-btn" id="sendButton">Send ↑</button>
+    </div>
+  </div>
+  <div class="footer-note">NOVA AI can make mistakes. Check important information.</div>
 </div>
 </main>
 </div>
 
 <div class="attach-menu" id="attachMenu">
-<div class="attach-title">ATTACH TO NOVA AI</div>
-<button type="button" class="attach-option" id="cameraChoice"><span class="attach-icon">📷</span><span>Camera<small>Take a new picture</small></span></button>
-<button type="button" class="attach-option" id="photoChoice"><span class="attach-icon">🖼️</span><span>Photos<small>Choose an existing image</small></span></button>
-<button type="button" class="attach-option" id="fileChoice"><span class="attach-icon">📁</span><span>Files<small>Choose a document</small></span></button>
+  <div class="attach-title">ATTACH TO NOVA AI</div>
+  <button type="button" class="attach-option" id="cameraChoice"><span class="attach-icon">📷</span><span>Camera<small>Take a new picture</small></span></button>
+  <button type="button" class="attach-option" id="photoChoice"><span class="attach-icon">🖼️</span><span>Photos<small>Choose an existing image</small></span></button>
+  <button type="button" class="attach-option" id="fileChoice"><span class="attach-icon">📁</span><span>Files<small>Choose a document</small></span></button>
 </div>
 
 <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
@@ -151,11 +169,269 @@ const input=document.getElementById('messageInput');
 const messages=document.getElementById('messages');
 const welcome=document.getElementById('welcome');
 const chatArea=document.getElementById('chatArea');
+const sendButton=document.getElementById('sendButton');
 
 let sidebarOpen=false;
 let selectedFile=null;
 let selectedURL=null;
 let chats=[];
+let activeChat=[];
+let isReplying=false;
+
+function isMobile(){return matchMedia('(max-width:700px)').matches}
+
+/* SIDEBAR */
+function openSidebar(){
+ if(!isMobile())return;
+ sidebarOpen=true;
+ sidebar.classList.add('open');
+ overlay.classList.add('show');
+}
+function closeSidebar(){
+ sidebarOpen=false;
+ sidebar.classList.remove('open');
+ overlay.classList.remove('show');
+}
+document.getElementById('menuButton').addEventListener('click',()=>{
+ sidebarOpen?closeSidebar():openSidebar();
+});
+overlay.addEventListener('click',closeSidebar);
+
+let startX=0,startY=0,tracking=false;
+document.addEventListener('touchstart',e=>{
+ if(!isMobile())return;
+ startX=e.touches[0].clientX;
+ startY=e.touches[0].clientY;
+ tracking=sidebarOpen||startX<35;
+},{passive:true});
+document.addEventListener('touchend',e=>{
+ if(!isMobile()||!tracking)return;
+ let dx=e.changedTouches[0].clientX-startX;
+ let dy=e.changedTouches[0].clientY-startY;
+ tracking=false;
+ if(Math.abs(dx)<55||Math.abs(dx)<Math.abs(dy)*1.3)return;
+ if(dx<0&&sidebarOpen)closeSidebar();
+ if(dx>0&&!sidebarOpen&&startX<45)openSidebar();
+},{passive:true});
+
+/* ATTACHMENT MENU */
+function closeAttachMenu(){attachMenu.classList.remove('show')}
+attachButton.addEventListener('click',e=>{
+ e.preventDefault();
+ e.stopPropagation();
+ attachMenu.classList.toggle('show');
+});
+attachMenu.addEventListener('click',e=>e.stopPropagation());
+document.addEventListener('click',e=>{
+ if(!attachMenu.contains(e.target)&&e.target!==attachButton)closeAttachMenu();
+});
+
+document.getElementById('cameraChoice').addEventListener('click',()=>{
+ closeAttachMenu();
+ document.getElementById('cameraInput').click();
+});
+document.getElementById('photoChoice').addEventListener('click',()=>{
+ closeAttachMenu();
+ document.getElementById('photoInput').click();
+});
+document.getElementById('fileChoice').addEventListener('click',()=>{
+ closeAttachMenu();
+ document.getElementById('fileInput').click();
+});
+
+/* FILE PREVIEW */
+function handleFile(file){
+ if(!file)return;
+ selectedFile=file;
+ if(selectedURL)URL.revokeObjectURL(selectedURL);
+ selectedURL=null;
+ const img=document.getElementById('previewImage');
+ img.style.display='none';
+ if(file.type.startsWith('image/')){
+  selectedURL=URL.createObjectURL(file);
+  img.src=selectedURL;
+  img.style.display='block';
+ }
+ document.getElementById('previewName').textContent=file.name;
+ document.getElementById('preview').style.display='flex';
+}
+['cameraInput','photoInput','fileInput'].forEach(id=>{
+ document.getElementById(id).addEventListener('change',function(){
+  if(this.files&&this.files[0])handleFile(this.files[0]);
+  this.value='';
+ });
+});
+
+function removeAttachment(){
+ selectedFile=null;
+ if(selectedURL)URL.revokeObjectURL(selectedURL);
+ selectedURL=null;
+ document.getElementById('preview').style.display='none';
+ document.getElementById('previewImage').src='';
+}
+
+/* CHAT HISTORY */
+function newChat(){
+ if(activeChat.length){
+  chats.unshift({
+   title:activeChat[0].text.slice(0,35)||'New conversation',
+   messages:[...activeChat]
+  });
+ }
+ activeChat=[];
+ messages.innerHTML='';
+ welcome.style.display='block';
+ input.value='';
+ removeAttachment();
+ renderHistory();
+ closeSidebar();
+}
+function renderHistory(){
+ const history=document.getElementById('history');
+ history.innerHTML='';
+ chats.forEach((chat,index)=>{
+  const item=document.createElement('div');
+  item.className='history-item';
+  item.textContent='💬 '+chat.title;
+  item.onclick=()=>loadChat(index);
+  history.appendChild(item);
+ });
+}
+function loadChat(index){
+ activeChat=[...chats[index].messages];
+ messages.innerHTML='';
+ welcome.style.display='none';
+ activeChat.forEach(m=>addMessage(m.role,m.text,m.image));
+ closeSidebar();
+}
+
+/* MESSAGE DISPLAY */
+function addMessage(role,text,image){
+ const row=document.createElement('div');
+ row.className='message '+(role==='user'?'user':'assistant');
+
+ if(role==='assistant'){
+  const avatar=document.createElement('div');
+  avatar.className='avatar';
+  avatar.textContent='N';
+  row.appendChild(avatar);
+ }
+
+ const bubble=document.createElement('div');
+ bubble.className='bubble';
+
+ if(image&&image.startsWith('blob:')){
+  const img=document.createElement('img');
+  img.src=image;
+  img.alt='Attachment';
+  bubble.appendChild(img);
+ }
+
+ const content=document.createElement('div');
+ content.textContent=text||'';
+ bubble.appendChild(content);
+ row.appendChild(bubble);
+ messages.appendChild(row);
+ scrollToBottom();
+
+ return {row,bubble,content};
+}
+
+function scrollToBottom(){
+ chatArea.scrollTop=chatArea.scrollHeight;
+}
+
+/* THINKING INDICATOR */
+function showThinking(){
+ const result=addMessage('assistant','');
+ result.content.innerHTML=
+  'NOVA is thinking <span class="dots"><span></span><span></span><span></span></span>';
+ return result;
+}
+
+/* SIMULATED STREAMING */
+function streamReply(target,reply,onComplete){
+ let index=0;
+ target.textContent='';
+
+ const speed=18;
+ const timer=setInterval(()=>{
+  target.textContent+=reply.slice(index,index+3);
+  index+=3;
+  scrollToBottom();
+
+  if(index>=reply.length){
+   clearInterval(timer);
+   onComplete();
+  }
+ },speed);
+}
+
+/* SEND MESSAGE */
+function sendMessage(){
+ if(isReplying)return;
+
+ const text=input.value.trim();
+ if(!text&&!selectedFile)return;
+
+ welcome.style.display='none';
+
+ const file=selectedFile;
+ const image=selectedURL;
+ const fileName=file?file.name:'';
+
+ addMessage('user',text,image);
+
+ activeChat.push({
+  role:'user',
+  text:text+(file?' [Attachment: '+fileName+']':''),
+  image:image
+ });
+
+ input.value='';
+ removeAttachment();
+
+ isReplying=true;
+ sendButton.disabled=true;
+
+ const thinking=showThinking();
+
+ setTimeout(()=>{
+  thinking.content.textContent='';
+
+  const reply=
+   "Thanks for trying NOVA AI!\n\n"+
+   "I'm currently running in demonstration mode. My real AI connection has not been activated yet, so I can't properly understand and answer your questions at this stage.\n\n"+
+   "Once the AI service is connected, I'll be able to have natural conversations, explain things step by step and respond to follow-up questions.";
+
+  streamReply(thinking.content,reply,()=>{
+   activeChat.push({role:'assistant',text:reply});
+   renderHistory();
+   isReplying=false;
+   sendButton.disabled=false;
+   scrollToBottom();
+  });
+ },1200);
+}
+
+function useSuggestion(text){
+ input.value=text;
+ sendMessage();
+}
+
+sendButton.addEventListener('click',sendMessage);
+input.addEventListener('keydown',e=>{
+ if(e.key==='Enter'&&!e.shiftKey){
+  e.preventDefault();
+  sendMessage();
+ }
+});
+
+renderHistory();
+</script>
+</body>
+</html>
+ats=[];
 let activeChat=[];
 
 function isMobile(){return matchMedia('(max-width:700px)').matches}

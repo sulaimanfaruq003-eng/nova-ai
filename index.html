@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b16">
+<title>NOVA AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080b16;color:#f5f7ff;font-family:Arial,sans-serif}
+header{height:65px;padding:18px 22px;border-bottom:1px solid #202943}
+.logo{font-size:24px;font-weight:bold;color:#398bff}
+.logo span{color:white}
+main{height:calc(100dvh - 155px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+h1{font-size:30px;text-align:center}
+p{color:#929db5;text-align:center}
+#messages{width:100%;max-width:650px;overflow:auto}
+.msg{padding:14px;margin:10px 0;border-radius:14px;line-height:1.5}
+.user{background:#172c50;margin-left:15%;white-space:pre-wrap}
+.nova{background:#121a2c;margin-right:10%}
+.composer{position:fixed;bottom:0;width:100%;padding:15px;background:#080b16}
+form{max-width:700px;margin:auto;display:flex;gap:10px;padding:10px;border:1px solid #30466f;border-radius:17px;background:#10182a}
+textarea{flex:1;background:none;color:white;border:0;outline:0;resize:none;font-size:16px}
+button{background:#287cff;color:white;border:0;border-radius:12px;padding:12px}
+</style>
+</head>
+<body>
+<header><div class="logo">N<span>OVA</span> AI</div></header>
+<main>
+<h1>What can I help you with?</h1>
+<p>Your AI. Your World.</p>
+<div id="messages"></div>
+</main>
+<div class="composer">
+<form id="chat">
+<textarea id="input" rows="1" placeholder="Message Nova AI..."></textarea>
+<button type="submit">Send</button>
+</form>
+<p style="font-size:11px">Nova AI · Your conversations start here</p>
+</div>
+<script>
+const form=document.getElementById('chat');
+const input=document.getElementById('input');
+const messages=document.getElementById('messages');
+form.addEventListener('submit',e=>{
+e.preventDefault();
+const value=input.value.trim();
+if(!value)return;
+const user=document.createElement('div');
+user.className='msg user';
+user.textContent=value;
+messages.appendChild(user);
+input.value='';
+const reply=document.createElement('div');
+reply.className='msg nova';
+reply.textContent='Welcome to Nova AI! The AI brain will be connected soon.';
+messages.appendChild(reply);
+});
+</script>
+</body>
+</html>

@@ -5,58 +5,183 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080b16">
-<title>NOVA AI</title>
+<title>Nova AI</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080b16;color:#f5f7ff;font-family:Arial,sans-serif}
-header{height:65px;padding:18px 22px;border-bottom:1px solid #202943}
-.logo{font-size:24px;font-weight:bold;color:#398bff}
-.logo span{color:white}
-main{height:calc(100dvh - 155px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-h1{font-size:30px;text-align:center}
-p{color:#929db5;text-align:center}
-#messages{width:100%;max-width:650px;overflow:auto}
-.msg{padding:14px;margin:10px 0;border-radius:14px;line-height:1.5}
-.user{background:#172c50;margin-left:15%;white-space:pre-wrap}
-.nova{background:#121a2c;margin-right:10%}
-.composer{position:fixed;bottom:0;width:100%;padding:15px;background:#080b16}
-form{max-width:700px;margin:auto;display:flex;gap:10px;padding:10px;border:1px solid #30466f;border-radius:17px;background:#10182a}
-textarea{flex:1;background:none;color:white;border:0;outline:0;resize:none;font-size:16px}
-button{background:#287cff;color:white;border:0;border-radius:12px;padding:12px}
+body{margin:0;background:#080b16;color:#f4f7ff;font-family:Arial,sans-serif}
+button{cursor:pointer}
+.app{display:flex;height:100dvh;overflow:hidden}
+.sidebar{width:260px;background:#0d1423;border-right:1px solid #202943;padding:18px;display:flex;flex-direction:column;flex-shrink:0}
+.brand{font-size:25px;font-weight:bold;color:#3990ff;margin:10px 0 25px}
+.brand span{color:white}
+.new{background:#172b49;color:white;border:1px solid #294a78;padding:13px;border-radius:12px;text-align:left}
+.history-title{color:#8795ae;font-size:12px;margin:25px 5px 10px}
+.history{overflow:auto}
+.history button{display:block;width:100%;padding:12px;border:0;background:transparent;color:#c5d0e3;text-align:left;border-radius:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history button:hover{background:#18243a}
+.side-bottom{margin-top:auto;color:#8795ae;font-size:13px;padding:12px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:62px;border-bottom:1px solid #202943;display:flex;align-items:center;padding:0 18px;gap:14px}
+.menu{background:transparent;color:white;border:0;font-size:23px}
+.topname{font-weight:bold}
+.chat{flex:1;overflow:auto;padding:24px 16px 150px}
+.welcome{text-align:center;margin:12vh auto 25px}
+.welcome h1{font-size:30px;margin-bottom:10px}
+.welcome p{color:#92a0b8}
+#messages{max-width:760px;margin:auto}
+.message{padding:14px 17px;margin:15px 0;border-radius:17px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.user{background:#19345a;margin-left:auto;max-width:85%;width:fit-content}
+.nova{background:#121d30;margin-right:auto;max-width:90%;width:fit-content}
+.thinking{color:#83a9e8;padding:12px}
+.composer-area{position:relative;padding:12px 15px 20px;background:#080b16}
+.composer{max-width:780px;margin:auto;border:1px solid #30466f;background:#10182a;border-radius:19px;padding:12px;display:flex;align-items:flex-end;gap:10px}
+textarea{flex:1;min-width:0;background:transparent;color:white;border:0;outline:0;resize:none;font-size:16px;max-height:120px}
+.attach{background:transparent;color:#a9c5f5;font-size:23px;border:0}
+.send{background:#287cff;color:white;border:0;border-radius:12px;padding:12px 17px}
+#preview{max-width:780px;margin:0 auto 8px;display:none;align-items:center;gap:10px;color:#b7c8e5}
+#preview img{width:65px;height:65px;object-fit:cover;border-radius:9px}
+#preview button{background:#392333;color:white;border:0;padding:7px;border-radius:8px}
+.hint{text-align:center;font-size:11px;color:#6e7e99;margin-top:9px}
+@media(max-width:650px){
+.sidebar{position:fixed;z-index:5;top:0;bottom:0;left:-270px;transition:left .2s;box-shadow:10px 0 30px #0008}
+.sidebar.open{left:0}
+.welcome h1{font-size:25px}
+.chat{padding-left:12px;padding-right:12px}
+}
 </style>
 </head>
 <body>
-<header><div class="logo">N<span>OVA</span> AI</div></header>
-<main>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<div class="brand">N<span>OVA</span> AI</div>
+<button class="new" id="newChat">＋ New Chat</button>
+<div class="history-title">RECENT CHATS</div>
+<div class="history" id="history"></div>
+<div class="side-bottom">Your AI. Your World.</div>
+</aside>
+<section class="main">
+<header class="topbar">
+<button class="menu" id="menu">☰</button>
+<div class="topname">Nova AI</div>
+</header>
+<div class="chat" id="chat">
+<div class="welcome" id="welcome">
 <h1>What can I help you with?</h1>
 <p>Your AI. Your World.</p>
+</div>
 <div id="messages"></div>
-</main>
+</div>
+<div class="composer-area">
+<div id="preview"><img id="previewImage" alt="Attachment preview"><span id="previewName"></span><button id="removeImage">Remove</button></div>
 <div class="composer">
-<form id="chat">
+<label class="attach" for="file" title="Attach image">＋</label>
+<input id="file" type="file" accept="image/*" hidden>
 <textarea id="input" rows="1" placeholder="Message Nova AI..."></textarea>
-<button type="submit">Send</button>
-</form>
-<p style="font-size:11px">Nova AI · Your conversations start here</p>
+<button class="send" id="send">Send</button>
+</div>
+<div class="hint">Check your message and attachment before pressing Send.</div>
+</div>
+</section>
 </div>
 <script>
-const form=document.getElementById('chat');
-const input=document.getElementById('input');
 const messages=document.getElementById('messages');
-form.addEventListener('submit',e=>{
-e.preventDefault();
-const value=input.value.trim();
-if(!value)return;
-const user=document.createElement('div');
-user.className='msg user';
-user.textContent=value;
-messages.appendChild(user);
-input.value='';
-const reply=document.createElement('div');
-reply.className='msg nova';
-reply.textContent='Welcome to Nova AI! The AI brain will be connected soon.';
-messages.appendChild(reply);
+const input=document.getElementById('input');
+const file=document.getElementById('file');
+const preview=document.getElementById('preview');
+const previewImage=document.getElementById('previewImage');
+const previewName=document.getElementById('previewName');
+const welcome=document.getElementById('welcome');
+const historyBox=document.getElementById('history');
+let attachment=null;
+let chats=[];
+let active=null;
+
+function newChat(){
+active={id:Date.now(),title:'New chat',items:[]};
+chats.unshift(active);
+messages.innerHTML='';
+welcome.style.display='block';
+clearAttachment();
+renderHistory();
+}
+function renderHistory(){
+historyBox.innerHTML='';
+chats.forEach(c=>{
+const b=document.createElement('button');
+b.textContent=c.title;
+b.onclick=()=>loadChat(c.id);
+historyBox.appendChild(b);
 });
+}
+function loadChat(id){
+active=chats.find(c=>c.id===id);
+messages.innerHTML='';
+welcome.style.display=active.items.length?'none':'block';
+active.items.forEach(item=>showMessage(item.text,item.who));
+}
+function showMessage(text,who){
+const div=document.createElement('div');
+div.className='message '+who;
+div.textContent=text;
+messages.appendChild(div);
+document.getElementById('chat').scrollTop=document.getElementById('chat').scrollHeight;
+}
+function clearAttachment(){
+attachment=null;
+file.value='';
+preview.style.display='none';
+previewImage.src='';
+previewName.textContent='';
+}
+file.onchange=()=>{
+const selected=file.files[0];
+if(!selected)return;
+if(!selected.type.startsWith('image/'))return;
+attachment=selected;
+previewImage.src=URL.createObjectURL(selected);
+previewName.textContent=selected.name;
+preview.style.display='flex';
+};
+document.getElementById('removeImage').onclick=clearAttachment;
+document.getElementById('menu').onclick=()=>{
+document.getElementById('sidebar').classList.toggle('open');
+};
+document.getElementById('newChat').onclick=()=>{
+newChat();
+document.getElementById('sidebar').classList.remove('open');
+};
+document.getElementById('send').onclick=()=>{
+const text=input.value.trim();
+if(!text&&!attachment)return;
+if(!active)newChat();
+welcome.style.display='none';
+const displayText=text+(attachment?'\n[Image attached: '+attachment.name+']':'');
+active.items.push({text:displayText,who:'user'});
+showMessage(displayText,'user');
+if(active.title==='New chat'){
+active.title=text.slice(0,30)||'Image conversation';
+renderHistory();
+}
+input.value='';
+clearAttachment();
+const thinking=document.createElement('div');
+thinking.className='thinking';
+thinking.textContent='Nova is thinking...';
+messages.appendChild(thinking);
+setTimeout(()=>{
+thinking.remove();
+const answer='Welcome to Nova AI! Your new interface is working. The secure AI service will be connected in a later step.';
+active.items.push({text:answer,who:'nova'});
+showMessage(answer,'nova');
+},900);
+};
+input.addEventListener('keydown',e=>{
+if(e.key==='Enter'&&!e.shiftKey){
+e.preventDefault();
+document.getElementById('send').click();
+}
+});
+newChat();
 </script>
 </body>
 </html>

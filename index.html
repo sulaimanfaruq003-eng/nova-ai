@@ -16,11 +16,11 @@ button,textarea,input{font:inherit}button{cursor:pointer}
 .brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;margin:5px 0 25px}
 .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#1677ff,#64c4ff);display:grid;place-items:center;color:white;font-size:22px;font-weight:900}
 .newchat{background:var(--blue);border:0;color:white;padding:13px;border-radius:12px;font-weight:700}
-.sideheading{font-size:12px;color:var(--muted);margin:25px 5px 10px}
+.sideheading{font-size:12px;color:var(--muted);margin:20px 5px 10px}
 .searchbox{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:white;outline:none;margin-bottom:12px;font-size:13px}
 .searchbox:focus{border-color:var(--blue)}
 .searchbox::placeholder{color:#8192ad}
-.chatlist{overflow:auto;flex:1}
+.chatlist{overflow:auto;flex:1;min-height:80px}
 .chatrow{display:flex;align-items:center;gap:4px;margin-bottom:5px}
 .chatitem{flex:1;min-width:0;padding:11px;border-radius:9px;color:#cbd6e9;cursor:pointer;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chatitem:hover,.chatitem.active{background:var(--panel2)}
@@ -29,6 +29,16 @@ button,textarea,input{font:inherit}button{cursor:pointer}
 .no-results{color:var(--muted);font-size:13px;padding:12px 8px;line-height:1.5}
 .sidebottom{border-top:1px solid var(--border);padding-top:12px;color:var(--muted);font-size:13px;display:grid;gap:8px}
 .sideaction{background:var(--panel);border:1px solid var(--border);color:#dce7fb;padding:10px;border-radius:9px;text-align:left}
+.folder-area{margin-bottom:8px}
+.folder-heading{display:flex;align-items:center;justify-content:space-between}
+.folder-heading button{background:transparent;border:0;color:#9bb9e8;font-size:19px;padding:3px 8px}
+.folder-list{display:grid;gap:4px;max-height:180px;overflow-y:auto}
+.folder-row{display:flex;align-items:center;gap:5px}
+.folder-filter{flex:1;min-width:0;text-align:left;background:transparent;border:0;color:#cbd6e9;padding:9px;border-radius:8px;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.folder-filter:hover,.folder-filter.active{background:var(--panel2)}
+.folder-count{color:var(--muted);font-size:11px;margin-right:5px}
+.folder-options{background:transparent;border:0;color:#aabbd3;padding:7px;border-radius:7px}
+.folder-options:hover{background:var(--panel2)}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
 .topbar{height:60px;display:flex;align-items:center;padding:0 17px;border-bottom:1px solid var(--border);gap:13px;flex-shrink:0}
 .menu{background:none;border:0;color:white;font-size:23px}
@@ -75,14 +85,12 @@ button,textarea,input{font:inherit}button{cursor:pointer}
 .dots span{animation:blink 1.2s infinite;opacity:.2}
 .dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
 @keyframes blink{50%{opacity:1}}
-.message-menu{display:none;position:fixed;z-index:1000;background:#192943;border:1px solid #405574;border-radius:12px;padding:6px;min-width:165px;box-shadow:0 12px 35px #0009}
-.message-menu.show{display:grid}
-.message-menu button{border:0;background:transparent;color:white;text-align:left;padding:11px;border-radius:8px;font-size:14px}
-.message-menu button:hover{background:#2a4162}
-.chat-actions{display:none;position:fixed;z-index:1001;background:#192943;border:1px solid #405574;border-radius:12px;padding:6px;min-width:175px;box-shadow:0 12px 35px #0009}
-.chat-actions.show{display:grid}
-.chat-actions button{border:0;background:transparent;color:white;text-align:left;padding:11px;border-radius:8px;font-size:14px}
-.chat-actions button:hover{background:#2a4162}
+.message-menu,.chat-actions,.folder-actions{display:none;position:fixed;z-index:1000;background:#192943;border:1px solid #405574;border-radius:12px;padding:6px;min-width:165px;box-shadow:0 12px 35px #0009}
+.message-menu.show,.chat-actions.show,.folder-actions.show{display:grid}
+.message-menu button,.chat-actions button,.folder-actions button{border:0;background:transparent;color:white;text-align:left;padding:11px;border-radius:8px;font-size:14px}
+.message-menu button:hover,.chat-actions button:hover,.folder-actions button:hover{background:#2a4162}
+.chat-actions{z-index:1001;min-width:190px}
+.folder-actions{z-index:1002;min-width:175px}
 .toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#203450;color:white;padding:10px 16px;border-radius:20px;font-size:13px;z-index:1100;display:none}
 .overlay{display:none}
 @media(max-width:700px){
@@ -99,6 +107,12 @@ button,textarea,input{font:inherit}button{cursor:pointer}
 <aside class="sidebar" id="sidebar">
  <div class="brand"><div class="logo">N</div>NOVA AI</div>
  <button class="newchat" id="newChat">＋ New Chat</button>
+
+ <div class="folder-area">
+  <div class="sideheading folder-heading">FOLDERS <button id="addFolder" title="Create folder">＋</button></div>
+  <div class="folder-list" id="folderList"></div>
+ </div>
+
  <div class="sideheading">RECENT CHATS</div>
  <input class="searchbox" id="chatSearch" type="search" placeholder="🔍 Search conversations..." autocomplete="off">
  <div class="chatlist" id="chatList"></div>
@@ -145,6 +159,7 @@ button,textarea,input{font:inherit}button{cursor:pointer}
 </div>
 <div class="message-menu" id="messageMenu"></div>
 <div class="chat-actions" id="chatActions"></div>
+<div class="folder-actions" id="folderActions"></div>
 <div class="toast" id="toast"></div>
 <input hidden type="file" id="cameraInput" accept="image/*" capture="environment">
 <input hidden type="file" id="photoInput" accept="image/*">
@@ -154,18 +169,22 @@ button,textarea,input{font:inherit}button{cursor:pointer}
 const $=id=>document.getElementById(id);
 const messages=$('messages'),input=$('input');
 const STORAGE_KEY='nova_ai_saved_chats_v1';
+const DEFAULT_FOLDERS=['Work','School','Personal'];
 
 let chats=[];
+let folders=[];
 let currentChat=null;
 let attachment=null;
 let thinking=false;
 let holdTimer=null,menuIndex=null,toastTimer=null;
-let selectedChatId=null;
+let selectedChatId=null,selectedFolderId=null;
+let activeFolder='all';
 
 function saveChats(){
  try{
   localStorage.setItem(STORAGE_KEY,JSON.stringify({
    chats:chats,
+   folders:folders,
    currentChatId:currentChat?currentChat.id:null
   }));
  }catch(error){console.warn('NOVA could not save chats:',error)}
@@ -178,16 +197,31 @@ function loadChats(){
   const data=JSON.parse(saved);
   if(!data||!Array.isArray(data.chats))return false;
   chats=data.chats.filter(chat=>chat&&Array.isArray(chat.items));
-  chats.forEach(chat=>{if(typeof chat.pinned!=='boolean')chat.pinned=false});
+  chats.forEach(chat=>{
+   if(typeof chat.pinned!=='boolean')chat.pinned=false;
+   if(!('folderId' in chat))chat.folderId=null;
+  });
+  folders=Array.isArray(data.folders)?data.folders:[];
+  if(!folders.length){
+   folders=DEFAULT_FOLDERS.map((name,i)=>({id:'folder-'+i,name}));
+  }
   currentChat=chats.find(chat=>String(chat.id)===String(data.currentChatId))||chats[0]||null;
   return chats.length>0;
- }catch(error){chats=[];currentChat=null;return false}
+ }catch(error){chats=[];folders=[];currentChat=null;return false}
+}
+
+function ensureFolders(){
+ if(!folders.length){
+  folders=DEFAULT_FOLDERS.map((name,i)=>({id:'folder-'+i,name}));
+  saveChats();
+ }
 }
 
 function newChat(){
- currentChat={id:Date.now(),title:'New chat',items:[],pinned:false};
+ currentChat={id:Date.now(),title:'New chat',items:[],pinned:false,folderId:null};
  chats.unshift(currentChat);
  saveChats();
+ renderFolders();
  renderChatList();
  showWelcome();
  closeSidebar();
@@ -201,23 +235,141 @@ function showWelcome(){
  messages.appendChild(w);
 }
 
-/* CHAT SEARCH + PINNED CHATS */
+/* FOLDERS */
+function renderFolders(){
+ const list=$('folderList');
+ list.innerHTML='';
+
+ const all=document.createElement('div');
+ all.className='folder-row';
+ const allBtn=document.createElement('button');
+ allBtn.className='folder-filter'+(activeFolder==='all'?' active':'');
+ allBtn.textContent='💬 All chats';
+ allBtn.onclick=()=>{activeFolder='all';renderFolders();renderChatList()};
+ const allCount=document.createElement('span');
+ allCount.className='folder-count';
+ allCount.textContent=chats.length;
+ all.append(allBtn,allCount);
+ list.appendChild(all);
+
+ folders.forEach(folder=>{
+  const row=document.createElement('div');
+  row.className='folder-row';
+
+  const btn=document.createElement('button');
+  btn.className='folder-filter'+(activeFolder===String(folder.id)?' active':'');
+  btn.textContent='📁 '+folder.name;
+  btn.onclick=()=>{
+   activeFolder=String(folder.id);
+   renderFolders();renderChatList();
+  };
+
+  const count=document.createElement('span');
+  count.className='folder-count';
+  count.textContent=chats.filter(c=>String(c.folderId)===String(folder.id)).length;
+
+  const more=document.createElement('button');
+  more.className='folder-options';
+  more.textContent='⋮';
+  more.title='Folder options';
+  more.onclick=e=>{
+   e.stopPropagation();
+   openFolderActions(folder.id,e.currentTarget);
+  };
+
+  row.append(btn,count,more);
+  list.appendChild(row);
+ });
+}
+
+function createFolder(){
+ const name=prompt('Enter a name for your new folder:');
+ if(name===null)return;
+ const clean=name.trim();
+ if(!clean){showToast('Folder name cannot be empty');return}
+ if(folders.some(f=>f.name.toLowerCase()===clean.toLowerCase())){
+  showToast('A folder with that name already exists');return;
+ }
+ const folder={id:'folder-'+Date.now(),name:clean.slice(0,35)};
+ folders.push(folder);
+ activeFolder=String(folder.id);
+ saveChats();renderFolders();renderChatList();
+ showToast('Folder created');
+}
+
+function closeFolderActions(){
+ $('folderActions').classList.remove('show');
+ selectedFolderId=null;
+}
+
+function openFolderActions(folderId,button){
+ closeFolderActions();
+ selectedFolderId=folderId;
+ const folder=folders.find(f=>String(f.id)===String(folderId));
+ if(!folder)return;
+ const menu=$('folderActions');
+ menu.innerHTML='';
+ [['rename','✏️ Rename folder'],['delete','🗑️ Delete folder']].forEach(([action,label])=>{
+  const b=document.createElement('button');
+  b.textContent=label;b.dataset.action=action;
+  menu.appendChild(b);
+ });
+ menu.classList.add('show');
+ const rect=button.getBoundingClientRect();
+ const w=menu.offsetWidth,h=menu.offsetHeight;
+ menu.style.left=Math.max(8,Math.min(rect.left,innerWidth-w-8))+'px';
+ menu.style.top=Math.max(8,Math.min(rect.bottom,innerHeight-h-8))+'px';
+}
+
+function performFolderAction(action){
+ const folder=folders.find(f=>String(f.id)===String(selectedFolderId));
+ closeFolderActions();
+ if(!folder)return;
+
+ if(action==='rename'){
+  const name=prompt('Enter a new folder name:',folder.name);
+  if(name===null)return;
+  const clean=name.trim();
+  if(!clean){showToast('Folder name cannot be empty');return}
+  if(folders.some(f=>f.id!==folder.id&&f.name.toLowerCase()===clean.toLowerCase())){
+   showToast('A folder with that name already exists');return;
+  }
+  folder.name=clean.slice(0,35);
+  saveChats();renderFolders();showToast('Folder renamed');
+ }
+
+ if(action==='delete'){
+  if(!confirm('Delete folder "'+folder.name+'"? Chats inside it will be moved to All chats.'))return;
+  chats.forEach(chat=>{
+   if(String(chat.folderId)===String(folder.id))chat.folderId=null;
+  });
+  folders=folders.filter(f=>String(f.id)!==String(folder.id));
+  if(activeFolder===String(folder.id))activeFolder='all';
+  saveChats();renderFolders();renderChatList();
+  showToast('Folder deleted');
+ }
+}
+
+$('addFolder').onclick=createFolder;
+$('folderActions').addEventListener('click',e=>{
+ const b=e.target.closest('[data-action]');
+ if(b)performFolderAction(b.dataset.action);
+});
+
+/* CHAT SEARCH + PINNED CHATS + FOLDER FILTER */
 function renderChatList(){
  const list=$('chatList');
  list.innerHTML='';
-
  const query=$('chatSearch').value.trim().toLowerCase();
 
  const filteredChats=chats.filter(chat=>{
+  if(activeFolder!=='all'&&String(chat.folderId)!==String(activeFolder))return false;
   if(!query)return true;
   const title=(chat.title||'New chat').toLowerCase();
-  const content=(chat.items||[]).map(item=>
-   (item.text||'')+' '+(item.fileName||'')
-  ).join(' ').toLowerCase();
+  const content=(chat.items||[]).map(item=>(item.text||'')+' '+(item.fileName||'')).join(' ').toLowerCase();
   return title.includes(query)||content.includes(query);
  });
 
- /* Pinned chats always appear first */
  filteredChats.sort((a,b)=>{
   if(a.pinned&&!b.pinned)return -1;
   if(!a.pinned&&b.pinned)return 1;
@@ -227,7 +379,7 @@ function renderChatList(){
  if(!filteredChats.length){
   const empty=document.createElement('div');
   empty.className='no-results';
-  empty.textContent=query?'No conversations found. Try another word.':'No conversations yet.';
+  empty.textContent=query?'No conversations found. Try another word.':(activeFolder==='all'?'No conversations yet.':'This folder is empty.');
   list.appendChild(empty);
   return;
  }
@@ -235,33 +387,19 @@ function renderChatList(){
  filteredChats.forEach(chat=>{
   const row=document.createElement('div');
   row.className='chatrow';
-
   const el=document.createElement('div');
   el.className='chatitem'+(currentChat&&chat.id===currentChat.id?' active':'');
   el.textContent=(chat.pinned?'📌 ':'')+(chat.title||'New chat');
   el.title=chat.title||'New chat';
   el.onclick=()=>{
-   currentChat=chat;
-   saveChats();
-   renderMessages();
-   renderChatList();
-   closeSidebar();
+   currentChat=chat;saveChats();renderMessages();renderChatList();closeSidebar();
   };
-
   const more=document.createElement('button');
-  more.className='chatmore';
-  more.textContent='⋮';
-  more.title='Chat options';
-  more.onclick=e=>{
-   e.stopPropagation();
-   openChatActions(chat.id,e.currentTarget);
-  };
-
-  row.append(el,more);
-  list.appendChild(row);
+  more.className='chatmore';more.textContent='⋮';more.title='Chat options';
+  more.onclick=e=>{e.stopPropagation();openChatActions(chat.id,e.currentTarget)};
+  row.append(el,more);list.appendChild(row);
  });
 }
-
 $('chatSearch').addEventListener('input',renderChatList);
 
 function renderMessages(){
@@ -291,21 +429,9 @@ function inlineMarkdown(s){
 function renderMarkdown(source){
  const lines=String(source).replace(/\r/g,'').split('\n');
  let out='',paragraph=[],listType='',listItems=[],code=false,codeLines=[],lang='';
-
- function flushP(){
-  if(paragraph.length){out+='<p>'+paragraph.map(inlineMarkdown).join('<br>')+'</p>';paragraph=[]}
- }
- function flushList(){
-  if(listItems.length){
-   out+='<'+listType+'>'+listItems.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+listType+'>';
-   listItems=[];listType='';
-  }
- }
- function flushCode(){
-  out+='<div class="codebox"><div class="codehead"><span>'+escapeHTML(lang||'Code')+'</span><button type="button" class="copycode">Copy code</button></div><pre><code>'+escapeHTML(codeLines.join('\n'))+'</code></pre></div>';
-  codeLines=[];lang='';
- }
-
+ function flushP(){if(paragraph.length){out+='<p>'+paragraph.map(inlineMarkdown).join('<br>')+'</p>';paragraph=[]}}
+ function flushList(){if(listItems.length){out+='<'+listType+'>'+listItems.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+listType+'>';listItems=[];listType=''}}
+ function flushCode(){out+='<div class="codebox"><div class="codehead"><span>'+escapeHTML(lang||'Code')+'</span><button type="button" class="copycode">Copy code</button></div><pre><code>'+escapeHTML(codeLines.join('\n'))+'</code></pre></div>';codeLines=[];lang=''}
  for(let i=0;i<lines.length;i++){
   const line=lines[i];
   if(line.trim().startsWith('```')){
@@ -332,9 +458,7 @@ function renderMarkdown(source){
    const cells=s=>s.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(v=>v.trim());
    const headers=cells(line);i++;
    out+='<table><thead><tr>'+headers.map(v=>'<th>'+inlineMarkdown(v)+'</th>').join('')+'</tr></thead><tbody>';
-   while(i+1<lines.length&&lines[i+1].includes('|')){
-    i++;out+='<tr>'+cells(lines[i]).map(v=>'<td>'+inlineMarkdown(v)+'</td>').join('')+'</tr>';
-   }
+   while(i+1<lines.length&&lines[i+1].includes('|')){i++;out+='<tr>'+cells(lines[i]).map(v=>'<td>'+inlineMarkdown(v)+'</td>').join('')+'</tr>'}
    out+='</tbody></table>';continue;
   }
   flushList();paragraph.push(line);
@@ -344,56 +468,32 @@ function renderMarkdown(source){
 }
 
 function addMessageElement(item,index){
- const row=document.createElement('div');
- row.className='message '+item.role;
- row.dataset.index=index;
- const avatar=document.createElement('div');
- avatar.className='avatar';
- avatar.textContent=item.role==='user'?'You':'N';
+ const row=document.createElement('div');row.className='message '+item.role;row.dataset.index=index;
+ const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=item.role==='user'?'You':'N';
  const body=document.createElement('div');
- const bubble=document.createElement('div');
- bubble.className='bubble';
- const content=document.createElement('div');
- content.className='message-content';
- if(item.role==='assistant')content.innerHTML=renderMarkdown(item.text);
- else content.textContent=item.text;
- if(item.fileName){
-  const f=document.createElement('div');
-  f.style.marginTop='8px';
-  f.textContent='📎 '+item.fileName;
-  content.appendChild(f);
- }
- bubble.appendChild(content);
- body.appendChild(bubble);
- row.append(avatar,body);
- messages.appendChild(row);
+ const bubble=document.createElement('div');bubble.className='bubble';
+ const content=document.createElement('div');content.className='message-content';
+ if(item.role==='assistant')content.innerHTML=renderMarkdown(item.text);else content.textContent=item.text;
+ if(item.fileName){const f=document.createElement('div');f.style.marginTop='8px';f.textContent='📎 '+item.fileName;content.appendChild(f)}
+ bubble.appendChild(content);body.appendChild(bubble);row.append(avatar,body);messages.appendChild(row);
 }
 
 function addMessage(role,text,fileName){
  const item={role,text,fileName:fileName||''};
- currentChat.items.push(item);
- addMessageElement(item,currentChat.items.length-1);
- saveChats();
- messages.scrollTop=messages.scrollHeight;
+ currentChat.items.push(item);addMessageElement(item,currentChat.items.length-1);saveChats();messages.scrollTop=messages.scrollHeight;
 }
 
 function updateTitle(){
  if(currentChat&&currentChat.title==='New chat'){
   const first=currentChat.items.find(x=>x.role==='user');
-  if(first){
-   currentChat.title=first.text.slice(0,32)||'New chat';
-   renderChatList();saveChats();
-  }
+  if(first){currentChat.title=first.text.slice(0,32)||'New chat';renderChatList();saveChats()}
  }
 }
 
 function showThinking(){
- const row=document.createElement('div');
- row.className='message assistant';
- row.id='thinkingRow';
+ const row=document.createElement('div');row.className='message assistant';row.id='thinkingRow';
  row.innerHTML='<div class="avatar">N</div><div class="bubble"><div class="thinking">NOVA is thinking <span class="dots"><span>●</span> <span>●</span> <span>●</span></span></div></div>';
- messages.appendChild(row);
- messages.scrollTop=messages.scrollHeight;
+ messages.appendChild(row);messages.scrollTop=messages.scrollHeight;
 }
 
 function demoReply(userText){
@@ -404,187 +504,119 @@ function sendMessage(textOverride){
  const text=(textOverride!==undefined?textOverride:input.value).trim();
  if((!text&&!attachment)||thinking)return;
  if(!currentChat)newChat();
- const file=attachment;
- const fileName=file?file.name:'';
+ const file=attachment,fileName=file?file.name:'';
  addMessage('user',text,fileName);
- input.value='';
- input.style.height='auto';
- attachment=null;
- $('preview').style.display='none';
- updateTitle();
- thinking=true;
- showThinking();
+ input.value='';input.style.height='auto';attachment=null;$('preview').style.display='none';
+ updateTitle();thinking=true;showThinking();
  setTimeout(()=>{
-  const t=$('thinkingRow');
-  if(t)t.remove();
+  const t=$('thinkingRow');if(t)t.remove();
   addMessage('assistant',demoReply(text||'your attachment'));
   thinking=false;saveChats();
  },1000);
 }
 
 function showToast(message){
- $('toast').textContent=message;
- $('toast').style.display='block';
- clearTimeout(toastTimer);
- toastTimer=setTimeout(()=>$('toast').style.display='none',1600);
+ $('toast').textContent=message;$('toast').style.display='block';
+ clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').style.display='none',1600);
 }
 
 async function copyText(text){
  try{await navigator.clipboard.writeText(text)}
- catch(e){
-  const ta=document.createElement('textarea');
-  ta.value=text;document.body.appendChild(ta);ta.select();
-  document.execCommand('copy');ta.remove();
- }
+ catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}
  showToast('Copied to clipboard');
 }
 
 function downloadText(filename,text){
  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
- const url=URL.createObjectURL(blob);
- const a=document.createElement('a');
- a.href=url;a.download=filename;
- document.body.appendChild(a);a.click();a.remove();
+ const url=URL.createObjectURL(blob);const a=document.createElement('a');
+ a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 function exportChat(chat){
  if(!chat)return;
- const content=(chat.title||'NOVA Chat')+'\n\n'+chat.items.map(item=>
-  (item.role==='user'?'YOU':'NOVA AI')+':\n'+item.text+
-  (item.fileName?'\nAttachment: '+item.fileName:'')
- ).join('\n\n--------------------\n\n');
- downloadText((chat.title||'nova-chat').replace(/[^\w-]+/g,'_')+'.txt',content);
- showToast('Chat exported');
+ const content=(chat.title||'NOVA Chat')+'\n\n'+chat.items.map(item=>(item.role==='user'?'YOU':'NOVA AI')+':\n'+item.text+(item.fileName?'\nAttachment: '+item.fileName:'')).join('\n\n--------------------\n\n');
+ downloadText((chat.title||'nova-chat').replace(/[^\w-]+/g,'_')+'.txt',content);showToast('Chat exported');
 }
 
 function exportAllChats(){
  if(!chats.length){showToast('There are no chats to export');return}
- const content=chats.map(chat=>
-  'CHAT: '+(chat.title||'New chat')+'\n\n'+chat.items.map(item=>
-   (item.role==='user'?'YOU':'NOVA AI')+':\n'+item.text+
-   (item.fileName?'\nAttachment: '+item.fileName:'')
-  ).join('\n\n')
- ).join('\n\n==============================\n\n');
- downloadText('NOVA-AI-All-Chats.txt',content);
- showToast('All chats exported');
+ const content=chats.map(chat=>'CHAT: '+(chat.title||'New chat')+'\n\n'+chat.items.map(item=>(item.role==='user'?'YOU':'NOVA AI')+':\n'+item.text+(item.fileName?'\nAttachment: '+item.fileName:'')).join('\n\n')).join('\n\n==============================\n\n');
+ downloadText('NOVA-AI-All-Chats.txt',content);showToast('All chats exported');
 }
 
-/* CHAT OPTIONS: PIN, UNPIN, RENAME, EXPORT AND DELETE */
-function closeChatActions(){
- $('chatActions').classList.remove('show');
- selectedChatId=null;
-}
+/* CHAT OPTIONS */
+function closeChatActions(){$('chatActions').classList.remove('show');selectedChatId=null}
 
 function openChatActions(chatId,button){
- closeChatActions();
- selectedChatId=chatId;
- const chat=chats.find(c=>String(c.id)===String(chatId));
- if(!chat)return;
-
- const menu=$('chatActions');
- menu.innerHTML='';
-
+ closeChatActions();selectedChatId=chatId;
+ const chat=chats.find(c=>String(c.id)===String(chatId));if(!chat)return;
+ const menu=$('chatActions');menu.innerHTML='';
  const options=[
   [chat.pinned?'unpin':'pin',chat.pinned?'📌 Unpin chat':'📌 Pin chat'],
+  ['move','📁 Move to folder'],
   ['rename','✏️ Rename chat'],
   ['export','📤 Export chat'],
   ['delete','🗑️ Delete chat']
  ];
-
- options.forEach(([action,label])=>{
-  const b=document.createElement('button');
-  b.textContent=label;
-  b.dataset.action=action;
-  menu.appendChild(b);
- });
-
+ options.forEach(([action,label])=>{const b=document.createElement('button');b.textContent=label;b.dataset.action=action;menu.appendChild(b)});
  menu.classList.add('show');
- const rect=button.getBoundingClientRect();
- const w=menu.offsetWidth,h=menu.offsetHeight;
- let left=Math.min(rect.left,innerWidth-w-8);
- let top=Math.min(rect.bottom,innerHeight-h-8);
- menu.style.left=Math.max(8,left)+'px';
- menu.style.top=Math.max(8,top)+'px';
+ const rect=button.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;
+ menu.style.left=Math.max(8,Math.min(rect.left,innerWidth-w-8))+'px';
+ menu.style.top=Math.max(8,Math.min(rect.bottom,innerHeight-h-8))+'px';
+}
+
+function moveChatToFolder(chat){
+ if(!folders.length){showToast('Create a folder first');return}
+ const choices=folders.map((f,i)=>(i+1)+'. '+f.name).join('\n');
+ const answer=prompt('Enter the number of the folder:\n\n'+choices+'\n\nEnter 0 to move to All chats.');
+ if(answer===null)return;
+ const n=Number(answer);
+ if(n===0){chat.folderId=null}
+ else if(Number.isInteger(n)&&n>=1&&n<=folders.length){chat.folderId=folders[n-1].id}
+ else{showToast('Invalid folder number');return}
+ saveChats();renderFolders();renderChatList();showToast(chat.folderId?'Chat moved to folder':'Chat moved to All chats');
 }
 
 function performChatAction(action){
- const chat=chats.find(c=>String(c.id)===String(selectedChatId));
- closeChatActions();
- if(!chat)return;
-
- if(action==='pin'){
-  chat.pinned=true;
-  saveChats();renderChatList();showToast('Chat pinned to the top');
-  return;
- }
-
- if(action==='unpin'){
-  chat.pinned=false;
-  saveChats();renderChatList();showToast('Chat unpinned');
-  return;
- }
-
+ const chat=chats.find(c=>String(c.id)===String(selectedChatId));closeChatActions();if(!chat)return;
+ if(action==='pin'){chat.pinned=true;saveChats();renderChatList();showToast('Chat pinned to the top');return}
+ if(action==='unpin'){chat.pinned=false;saveChats();renderChatList();showToast('Chat unpinned');return}
+ if(action==='move'){moveChatToFolder(chat);return}
  if(action==='rename'){
   const name=prompt('Enter a new name for this chat:',chat.title||'New chat');
-  if(name===null)return;
-  const clean=name.trim();
+  if(name===null)return;const clean=name.trim();
   if(!clean){showToast('Chat name cannot be empty');return}
-  chat.title=clean.slice(0,70);
-  saveChats();renderChatList();showToast('Chat renamed');
+  chat.title=clean.slice(0,70);saveChats();renderChatList();showToast('Chat renamed');
  }
-
  if(action==='export')exportChat(chat);
-
  if(action==='delete'){
   if(!confirm('Delete "'+(chat.title||'New chat')+'"? This cannot be undone.'))return;
   chats=chats.filter(c=>String(c.id)!==String(chat.id));
-  if(currentChat&&String(currentChat.id)===String(chat.id)){
-   currentChat=chats[0]||null;
-  }
-  if(!currentChat)newChat();
-  else{saveChats();renderChatList();renderMessages()}
+  if(currentChat&&String(currentChat.id)===String(chat.id))currentChat=chats[0]||null;
+  if(!currentChat)newChat();else{saveChats();renderFolders();renderChatList();renderMessages()}
   showToast('Chat deleted');
  }
 }
 
 $('chatActions').addEventListener('click',e=>{
- const b=e.target.closest('[data-action]');
- if(b)performChatAction(b.dataset.action);
+ const b=e.target.closest('[data-action]');if(b)performChatAction(b.dataset.action);
 });
-
 $('exportAll').onclick=exportAllChats;
-
 $('clearAll').onclick=()=>{
  if(!chats.length){showToast('There are no chats to clear');return}
  if(!confirm('Delete ALL your saved conversations? This cannot be undone.'))return;
- chats=[];
- currentChat=null;
- saveChats();
- newChat();
- showToast('All chats cleared');
+ chats=[];currentChat=null;saveChats();newChat();showToast('All chats cleared');
 };
 
-function closeMessageMenu(){
- $('messageMenu').classList.remove('show');
- menuIndex=null;
-}
+function closeMessageMenu(){$('messageMenu').classList.remove('show');menuIndex=null}
 
 function openMessageMenu(row,x,y){
  if(!row||!currentChat)return;
- closeMessageMenu();
- menuIndex=Number(row.dataset.index);
- const item=currentChat.items[menuIndex];
- const menu=$('messageMenu');
- menu.innerHTML='';
- const options=item.role==='user'?
- [['copy','📋 Copy'],['edit','✏️ Edit message']]:
- [['copy','📋 Copy'],['regenerate','🔄 Regenerate'],['like','👍 Good response'],['dislike','👎 Poor response']];
- options.forEach(([action,label])=>{
-  const b=document.createElement('button');
-  b.type='button';b.textContent=label;b.dataset.action=action;
-  menu.appendChild(b);
- });
+ closeMessageMenu();menuIndex=Number(row.dataset.index);
+ const item=currentChat.items[menuIndex],menu=$('messageMenu');menu.innerHTML='';
+ const options=item.role==='user'?[['copy','📋 Copy'],['edit','✏️ Edit message']]:[['copy','📋 Copy'],['regenerate','🔄 Regenerate'],['like','👍 Good response'],['dislike','👎 Poor response']];
+ options.forEach(([action,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.action=action;menu.appendChild(b)});
  menu.classList.add('show');
  const w=menu.offsetWidth,h=menu.offsetHeight;
  menu.style.left=Math.max(8,Math.min(x,innerWidth-w-8))+'px';
@@ -593,28 +625,17 @@ function openMessageMenu(row,x,y){
 
 function performMenuAction(action){
  if(menuIndex===null||!currentChat)return;
- const index=menuIndex;
- const item=currentChat.items[index];
- closeMessageMenu();
+ const index=menuIndex,item=currentChat.items[index];closeMessageMenu();
  if(action==='copy'){copyText(item.text);return}
- if(action==='edit'&&item.role==='user'){
-  input.value=item.text;input.focus();
-  currentChat.items.splice(index);
-  saveChats();renderMessages();return;
- }
- if(action==='like'||action==='dislike'){
-  item.feedback=action;saveChats();return;
- }
+ if(action==='edit'&&item.role==='user'){input.value=item.text;input.focus();currentChat.items.splice(index);saveChats();renderMessages();return}
+ if(action==='like'||action==='dislike'){item.feedback=action;saveChats();return}
  if(action==='regenerate'&&item.role==='assistant'){
   if(thinking)return;
-  currentChat.items.splice(index);
-  saveChats();renderMessages();
-  thinking=true;showThinking();
+  currentChat.items.splice(index);saveChats();renderMessages();thinking=true;showThinking();
   setTimeout(()=>{
    const t=$('thinkingRow');if(t)t.remove();
    const previous=[...currentChat.items].reverse().find(x=>x.role==='user');
-   addMessage('assistant',demoReply(previous?previous.text:'your message'));
-   thinking=false;saveChats();
+   addMessage('assistant',demoReply(previous?previous.text:'your message'));thinking=false;saveChats();
   },1000);
  }
 }
@@ -623,55 +644,41 @@ let startX=0,startY=0;
 messages.addEventListener('pointerdown',e=>{
  const row=e.target.closest('.message');
  if(!row||e.target.closest('button')||e.pointerType==='mouse')return;
- startX=e.clientX;startY=e.clientY;
- clearTimeout(holdTimer);
+ startX=e.clientX;startY=e.clientY;clearTimeout(holdTimer);
  holdTimer=setTimeout(()=>openMessageMenu(row,startX,startY),600);
 });
 messages.addEventListener('pointermove',e=>{
  if(Math.abs(e.clientX-startX)>12||Math.abs(e.clientY-startY)>12)clearTimeout(holdTimer);
 });
-['pointerup','pointercancel','pointerleave'].forEach(ev=>
- messages.addEventListener(ev,()=>clearTimeout(holdTimer))
-);
+['pointerup','pointercancel','pointerleave'].forEach(ev=>messages.addEventListener(ev,()=>clearTimeout(holdTimer)));
 messages.addEventListener('contextmenu',e=>{
- const row=e.target.closest('.message');
- if(!row)return;
+ const row=e.target.closest('.message');if(!row)return;
  e.preventDefault();openMessageMenu(row,e.clientX,e.clientY);
 });
 $('messageMenu').addEventListener('click',e=>{
- const b=e.target.closest('[data-action]');
- if(b)performMenuAction(b.dataset.action);
+ const b=e.target.closest('[data-action]');if(b)performMenuAction(b.dataset.action);
 });
+
 document.addEventListener('click',e=>{
  if(!e.target.closest('#messageMenu')&&!e.target.closest('.message'))closeMessageMenu();
  if(!e.target.closest('#chatActions')&&!e.target.closest('.chatmore'))closeChatActions();
+ if(!e.target.closest('#folderActions')&&!e.target.closest('.folder-options'))closeFolderActions();
 });
+
 messages.addEventListener('click',async e=>{
  const b=e.target.closest('.copycode');
- if(b){
-  await copyText(b.closest('.codebox').querySelector('code').textContent);
-  b.textContent='Copied!';
- }
+ if(b){await copyText(b.closest('.codebox').querySelector('code').textContent);b.textContent='Copied!'}
 });
 
 $('sendBtn').onclick=()=>sendMessage();
-input.addEventListener('keydown',e=>{
- if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}
-});
-input.addEventListener('input',()=>{
- input.style.height='auto';
- input.style.height=Math.min(input.scrollHeight,150)+'px';
-});
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
+input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,150)+'px'});
 $('newChat').onclick=newChat;
 $('menuBtn').onclick=()=>{
- $('sidebar').classList.toggle('open');
- $('overlay').classList.toggle('show');
+ $('sidebar').classList.toggle('open');$('overlay').classList.toggle('show');
 };
 $('overlay').onclick=closeSidebar;
-function closeSidebar(){
- $('sidebar').classList.remove('open');
- $('overlay').classList.remove('show');
-}
+function closeSidebar(){$('sidebar').classList.remove('open');$('overlay').classList.remove('show')}
 
 $('attachBtn').onclick=()=>$('attachMenu').classList.toggle('show');
 $('cameraBtn').onclick=()=>{$('attachMenu').classList.remove('show');$('cameraInput').click()};
@@ -680,42 +687,37 @@ $('fileBtn').onclick=()=>{$('attachMenu').classList.remove('show');$('fileInput'
 
 function setAttachment(file){
  if(!file)return;
- attachment=file;
- const preview=$('preview');
- preview.style.display='block';
- preview.innerHTML='';
+ attachment=file;const preview=$('preview');preview.style.display='block';preview.innerHTML='';
  if(file.type.startsWith('image/')){
-  const img=document.createElement('img');
-  img.src=URL.createObjectURL(file);
-  preview.appendChild(img);
+  const img=document.createElement('img');img.src=URL.createObjectURL(file);preview.appendChild(img);
  }
  preview.appendChild(document.createTextNode('📎 '+file.name+' — ready. Press Send when you want to attach it.'));
 }
-['cameraInput','photoInput','fileInput'].forEach(id=>
- $(id).addEventListener('change',e=>setAttachment(e.target.files[0]))
-);
+['cameraInput','photoInput','fileInput'].forEach(id=>$(id).addEventListener('change',e=>setAttachment(e.target.files[0])));
 
 document.addEventListener('click',e=>{
- const prompt=e.target.closest('[data-prompt]');
- if(prompt)sendMessage(prompt.dataset.prompt);
+ const promptButton=e.target.closest('[data-prompt]');
+ if(promptButton)sendMessage(promptButton.dataset.prompt);
 });
 
 $('micBtn').onclick=()=>{
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SpeechRecognition){showToast('Voice typing is not supported in this browser');return}
- const rec=new SpeechRecognition();
- rec.lang='en-US';rec.interimResults=false;
+ const rec=new SpeechRecognition();rec.lang='en-US';rec.interimResults=false;
  rec.onresult=e=>{input.value+=(input.value?' ':'')+e.results[0][0].transcript};
  rec.onerror=()=>showToast('Microphone unavailable. Check browser permission.');
  rec.start();
 };
 
-/* RESTORE SAVED CHATS */
+/* RESTORE SAVED CHATS AND FOLDERS */
+ensureFolders();
 if(loadChats()){
- renderChatList();
- renderMessages();
+ ensureFolders();
+ renderFolders();renderChatList();renderMessages();
 }else{
+ ensureFolders();
  newChat();
+ renderFolders();
 }
 </script>
 </body>

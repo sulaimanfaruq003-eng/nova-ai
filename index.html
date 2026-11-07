@@ -135,38 +135,100 @@ button,textarea{font:inherit}button{cursor:pointer}
 <script>
 const $=id=>document.getElementById(id);
 const messages=$('messages'),input=$('input');
-let chats=[],currentChat=null,attachment=null,thinking=false;
+const STORAGE_KEY='nova_ai_saved_chats_v1';
+
+let chats=[];
+let currentChat=null;
+let attachment=null;
+let thinking=false;
 let holdTimer=null,menuIndex=null,toastTimer=null;
+
+/* AUTOMATIC CHAT SAVING */
+function saveChats(){
+ try{
+  localStorage.setItem(STORAGE_KEY,JSON.stringify({
+   chats:chats,
+   currentChatId:currentChat?currentChat.id:null
+  }));
+ }catch(error){
+  console.warn('NOVA could not save chats:',error);
+ }
+}
+
+function loadChats(){
+ try{
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(!saved)return false;
+
+  const data=JSON.parse(saved);
+  if(!data||!Array.isArray(data.chats))return false;
+
+  chats=data.chats.filter(chat=>
+   chat&&Array.isArray(chat.items)
+  );
+
+  currentChat=chats.find(chat=>
+   String(chat.id)===String(data.currentChatId)
+  )||chats[0]||null;
+
+  return chats.length>0;
+ }catch(error){
+  console.warn('NOVA could not load saved chats:',error);
+  chats=[];
+  currentChat=null;
+  return false;
+ }
+}
 
 function newChat(){
  currentChat={id:Date.now(),title:'New chat',items:[]};
- chats.unshift(currentChat);renderChatList();showWelcome();closeSidebar();
+ chats.unshift(currentChat);
+ saveChats();
+ renderChatList();
+ showWelcome();
+ closeSidebar();
 }
+
 function showWelcome(){
  messages.innerHTML='';
- const w=document.createElement('div');w.className='welcome';
+ const w=document.createElement('div');
+ w.className='welcome';
  w.innerHTML='<div class="logo" style="margin:auto;width:55px;height:55px;font-size:30px">N</div><h1>What can I help you with?</h1><p>Your AI. Your World.</p><div class="suggestions"><button data-prompt="Explain something in a simple way">Explain something</button><button data-prompt="Help me write something">Help me write</button><button data-prompt="Give me creative ideas">Creative ideas</button></div>';
  messages.appendChild(w);
 }
+
 function renderChatList(){
  $('chatList').innerHTML='';
  chats.forEach(chat=>{
   const el=document.createElement('div');
   el.className='chatitem'+(currentChat&&chat.id===currentChat.id?' active':'');
-  el.textContent=chat.title;
-  el.onclick=()=>{currentChat=chat;renderMessages();renderChatList();closeSidebar()};
+  el.textContent=chat.title||'New chat';
+  el.onclick=()=>{
+   currentChat=chat;
+   saveChats();
+   renderMessages();
+   renderChatList();
+   closeSidebar();
+  };
   $('chatList').appendChild(el);
  });
 }
+
 function renderMessages(){
- closeMessageMenu();messages.innerHTML='';
- if(!currentChat||!currentChat.items.length){showWelcome();return}
+ closeMessageMenu();
+ messages.innerHTML='';
+ if(!currentChat||!currentChat.items.length){
+  showWelcome();
+  return;
+ }
  currentChat.items.forEach((item,index)=>addMessageElement(item,index));
  messages.scrollTop=messages.scrollHeight;
 }
+
 function escapeHTML(s){
  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+
 function inlineMarkdown(s){
  let x=escapeHTML(s);
  x=x.replace(/`([^`]+)`/g,'<code>$1</code>');
@@ -178,12 +240,28 @@ function inlineMarkdown(s){
  x=x.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,(_,label,url)=>'<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+label+'</a>');
  return x;
 }
+
 function renderMarkdown(source){
  const lines=String(source).replace(/\r/g,'').split('\n');
  let out='',paragraph=[],listType='',listItems=[],code=false,codeLines=[],lang='';
- function flushP(){if(paragraph.length){out+='<p>'+paragraph.map(inlineMarkdown).join('<br>')+'</p>';paragraph=[]}}
- function flushList(){if(listItems.length){out+='<'+listType+'>'+listItems.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+listType+'>';listItems=[];listType=''}}
- function flushCode(){out+='<div class="codebox"><div class="codehead"><span>'+escapeHTML(lang||'Code')+'</span><button type="button" class="copycode">Copy code</button></div><pre><code>'+escapeHTML(codeLines.join('\n'))+'</code></pre></div>';codeLines=[];lang=''}
+
+ function flushP(){
+  if(paragraph.length){
+   out+='<p>'+paragraph.map(inlineMarkdown).join('<br>')+'</p>';
+   paragraph=[];
+  }
+ }
+ function flushList(){
+  if(listItems.length){
+   out+='<'+listType+'>'+listItems.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+listType+'>';
+   listItems=[];listType='';
+  }
+ }
+ function flushCode(){
+  out+='<div class="codebox"><div class="codehead"><span>'+escapeHTML(lang||'Code')+'</span><button type="button" class="copycode">Copy code</button></div><pre><code>'+escapeHTML(codeLines.join('\n'))+'</code></pre></div>';
+  codeLines=[];lang='';
+ }
+
  for(let i=0;i<lines.length;i++){
   const line=lines[i];
   if(line.trim().startsWith('```')){
@@ -193,187 +271,377 @@ function renderMarkdown(source){
   }
   if(code){codeLines.push(line);continue}
   if(!line.trim()){flushP();flushList();continue}
+
   const heading=line.match(/^(#{1,3})\s+(.+)$/);
-  if(heading){flushP();flushList();let n=heading[1].length;out+='<h'+n+'>'+inlineMarkdown(heading[2])+'</h'+n+'>';continue}
-  if(/^[-*_]{3,}$/.test(line.trim())){flushP();flushList();out+='<hr>';continue}
+  if(heading){
+   flushP();flushList();
+   let n=heading[1].length;
+   out+='<h'+n+'>'+inlineMarkdown(heading[2])+'</h'+n+'>';
+   continue;
+  }
+  if(/^[-*_]{3,}$/.test(line.trim())){
+   flushP();flushList();out+='<hr>';continue;
+  }
   const quote=line.match(/^>\s?(.*)$/);
-  if(quote){flushP();flushList();out+='<blockquote>'+inlineMarkdown(quote[1])+'</blockquote>';continue}
-  const ul=line.match(/^\s*[-*+]\s+(.+)$/),ol=line.match(/^\s*\d+\.\s+(.+)$/);
+  if(quote){
+   flushP();flushList();out+='<blockquote>'+inlineMarkdown(quote[1])+'</blockquote>';
+   continue;
+  }
+  const ul=line.match(/^\s*[-*+]\s+(.+)$/);
+  const ol=line.match(/^\s*\d+\.\s+(.+)$/);
   if(ul||ol){
-   flushP();let type=ul?'ul':'ol';
+   flushP();
+   let type=ul?'ul':'ol';
    if(listType&&listType!==type)flushList();
-   listType=type;listItems.push((ul||ol)[1]);continue;
+   listType=type;
+   listItems.push((ul||ol)[1]);
+   continue;
   }
   if(line.includes('|')&&i+1<lines.length&&/^\s*\|?[\s:-]+\|[\s|:-]*$/.test(lines[i+1])){
    flushP();flushList();
    const cells=s=>s.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(v=>v.trim());
    const headers=cells(line);i++;
    out+='<table><thead><tr>'+headers.map(v=>'<th>'+inlineMarkdown(v)+'</th>').join('')+'</tr></thead><tbody>';
-   while(i+1<lines.length&&lines[i+1].includes('|')){i++;out+='<tr>'+cells(lines[i]).map(v=>'<td>'+inlineMarkdown(v)+'</td>').join('')+'</tr>'}
-   out+='</tbody></table>';continue;
+   while(i+1<lines.length&&lines[i+1].includes('|')){
+    i++;
+    out+='<tr>'+cells(lines[i]).map(v=>'<td>'+inlineMarkdown(v)+'</td>').join('')+'</tr>';
+   }
+   out+='</tbody></table>';
+   continue;
   }
-  flushList();paragraph.push(line);
+  flushList();
+  paragraph.push(line);
  }
- flushP();flushList();if(code)flushCode();
+ flushP();flushList();
+ if(code)flushCode();
  return out;
 }
+
 function addMessageElement(item,index){
- const row=document.createElement('div');row.className='message '+item.role;row.dataset.index=index;
- const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=item.role==='user'?'You':'N';
- const body=document.createElement('div'),bubble=document.createElement('div');
+ const row=document.createElement('div');
+ row.className='message '+item.role;
+ row.dataset.index=index;
+
+ const avatar=document.createElement('div');
+ avatar.className='avatar';
+ avatar.textContent=item.role==='user'?'You':'N';
+
+ const body=document.createElement('div');
+ const bubble=document.createElement('div');
  bubble.className='bubble';
- const content=document.createElement('div');content.className='message-content';
+
+ const content=document.createElement('div');
+ content.className='message-content';
+
  if(item.role==='assistant')content.innerHTML=renderMarkdown(item.text);
  else content.textContent=item.text;
+
  if(item.fileName){
-  const f=document.createElement('div');f.style.marginTop='8px';f.textContent='📎 '+item.fileName;content.appendChild(f);
+  const f=document.createElement('div');
+  f.style.marginTop='8px';
+  f.textContent='📎 '+item.fileName;
+  content.appendChild(f);
  }
- bubble.appendChild(content);body.appendChild(bubble);row.append(avatar,body);messages.appendChild(row);
+
+ bubble.appendChild(content);
+ body.appendChild(bubble);
+ row.append(avatar,body);
+ messages.appendChild(row);
 }
+
 function addMessage(role,text,fileName){
  const item={role,text,fileName:fileName||''};
- currentChat.items.push(item);addMessageElement(item,currentChat.items.length-1);
+ currentChat.items.push(item);
+ addMessageElement(item,currentChat.items.length-1);
+ saveChats();
  messages.scrollTop=messages.scrollHeight;
 }
+
 function updateTitle(){
  if(currentChat&&currentChat.title==='New chat'){
   const first=currentChat.items.find(x=>x.role==='user');
-  if(first){currentChat.title=first.text.slice(0,32)||'New chat';renderChatList()}
+  if(first){
+   currentChat.title=first.text.slice(0,32)||'New chat';
+   renderChatList();
+   saveChats();
+  }
  }
 }
+
 function showThinking(){
- const row=document.createElement('div');row.className='message assistant';row.id='thinkingRow';
+ const row=document.createElement('div');
+ row.className='message assistant';
+ row.id='thinkingRow';
  row.innerHTML='<div class="avatar">N</div><div class="bubble"><div class="thinking">NOVA is thinking <span class="dots"><span>●</span> <span>●</span> <span>●</span></span></div></div>';
- messages.appendChild(row);messages.scrollTop=messages.scrollHeight;
+ messages.appendChild(row);
+ messages.scrollTop=messages.scrollHeight;
 }
+
 function demoReply(userText){
  return "Thanks for your message! I have received: **"+userText.slice(0,180)+"**\n\nNOVA AI is currently in demonstration mode. It needs a real AI connection before it can understand questions and generate natural answers.";
 }
+
 function sendMessage(textOverride){
  const text=(textOverride!==undefined?textOverride:input.value).trim();
  if((!text&&!attachment)||thinking)return;
  if(!currentChat)newChat();
- const file=attachment,fileName=file?file.name:'';
+
+ const file=attachment;
+ const fileName=file?file.name:'';
+
  addMessage('user',text,fileName);
- input.value='';input.style.height='auto';attachment=null;$('preview').style.display='none';
- updateTitle();thinking=true;showThinking();
+
+ input.value='';
+ input.style.height='auto';
+ attachment=null;
+ $('preview').style.display='none';
+
+ updateTitle();
+ thinking=true;
+ showThinking();
+
  setTimeout(()=>{
-  const t=$('thinkingRow');if(t)t.remove();
+  const t=$('thinkingRow');
+  if(t)t.remove();
   addMessage('assistant',demoReply(text||'your attachment'));
   thinking=false;
+  saveChats();
  },1000);
 }
+
 function showToast(message){
- $('toast').textContent=message;$('toast').style.display='block';
- clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').style.display='none',1600);
+ $('toast').textContent=message;
+ $('toast').style.display='block';
+ clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>$('toast').style.display='none',1600);
 }
+
 async function copyText(text){
  try{await navigator.clipboard.writeText(text)}
- catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}
+ catch(e){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  ta.remove();
+ }
  showToast('Copied to clipboard');
 }
+
 function closeMessageMenu(){
- $('messageMenu').classList.remove('show');menuIndex=null;
+ $('messageMenu').classList.remove('show');
+ menuIndex=null;
 }
+
 function openMessageMenu(row,x,y){
  if(!row||!currentChat)return;
- closeMessageMenu();menuIndex=Number(row.dataset.index);
- const item=currentChat.items[menuIndex],menu=$('messageMenu');
+ closeMessageMenu();
+ menuIndex=Number(row.dataset.index);
+
+ const item=currentChat.items[menuIndex];
+ const menu=$('messageMenu');
  menu.innerHTML='';
+
  const options=item.role==='user'?
  [['copy','📋 Copy'],['edit','✏️ Edit message']]:
  [['copy','📋 Copy'],['regenerate','🔄 Regenerate'],['like','👍 Good response'],['dislike','👎 Poor response']];
+
  options.forEach(([action,label])=>{
-  const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.action=action;menu.appendChild(b);
+  const b=document.createElement('button');
+  b.type='button';
+  b.textContent=label;
+  b.dataset.action=action;
+  menu.appendChild(b);
  });
+
  menu.classList.add('show');
  const w=menu.offsetWidth,h=menu.offsetHeight;
  menu.style.left=Math.max(8,Math.min(x,innerWidth-w-8))+'px';
  menu.style.top=Math.max(8,Math.min(y,innerHeight-h-8))+'px';
 }
+
 function performMenuAction(action){
  if(menuIndex===null||!currentChat)return;
- const index=menuIndex,item=currentChat.items[index];
+
+ const index=menuIndex;
+ const item=currentChat.items[index];
  closeMessageMenu();
- if(action==='copy'){copyText(item.text);return}
- if(action==='edit'&&item.role==='user'){
-  input.value=item.text;input.focus();
-  currentChat.items.splice(index);renderMessages();return;
- }
- if(action==='like'||action==='dislike'){
-  item.feedback=action;
+
+ if(action==='copy'){
+  copyText(item.text);
   return;
  }
+
+ if(action==='edit'&&item.role==='user'){
+  input.value=item.text;
+  input.focus();
+  currentChat.items.splice(index);
+  saveChats();
+  renderMessages();
+  return;
+ }
+
+ if(action==='like'||action==='dislike'){
+  item.feedback=action;
+  saveChats();
+  return;
+ }
+
  if(action==='regenerate'&&item.role==='assistant'){
   if(thinking)return;
-  currentChat.items.splice(index);renderMessages();thinking=true;showThinking();
+
+  currentChat.items.splice(index);
+  saveChats();
+  renderMessages();
+  thinking=true;
+  showThinking();
+
   setTimeout(()=>{
-   const t=$('thinkingRow');if(t)t.remove();
+   const t=$('thinkingRow');
+   if(t)t.remove();
    const previous=[...currentChat.items].reverse().find(x=>x.role==='user');
    addMessage('assistant',demoReply(previous?previous.text:'your message'));
    thinking=false;
+   saveChats();
   },1000);
  }
 }
+
 let startX=0,startY=0;
+
 messages.addEventListener('pointerdown',e=>{
  const row=e.target.closest('.message');
  if(!row||e.target.closest('button')||e.pointerType==='mouse')return;
- startX=e.clientX;startY=e.clientY;
+ startX=e.clientX;
+ startY=e.clientY;
  clearTimeout(holdTimer);
  holdTimer=setTimeout(()=>openMessageMenu(row,startX,startY),600);
 });
+
 messages.addEventListener('pointermove',e=>{
  if(Math.abs(e.clientX-startX)>12||Math.abs(e.clientY-startY)>12)clearTimeout(holdTimer);
 });
-['pointerup','pointercancel','pointerleave'].forEach(ev=>messages.addEventListener(ev,()=>clearTimeout(holdTimer)));
+
+['pointerup','pointercancel','pointerleave'].forEach(ev=>
+ messages.addEventListener(ev,()=>clearTimeout(holdTimer))
+);
+
 messages.addEventListener('contextmenu',e=>{
- const row=e.target.closest('.message');if(!row)return;
- e.preventDefault();openMessageMenu(row,e.clientX,e.clientY);
+ const row=e.target.closest('.message');
+ if(!row)return;
+ e.preventDefault();
+ openMessageMenu(row,e.clientX,e.clientY);
 });
+
 $('messageMenu').addEventListener('click',e=>{
- const b=e.target.closest('[data-action]');if(b)performMenuAction(b.dataset.action);
+ const b=e.target.closest('[data-action]');
+ if(b)performMenuAction(b.dataset.action);
 });
+
 document.addEventListener('click',e=>{
  if(!e.target.closest('#messageMenu')&&!e.target.closest('.message'))closeMessageMenu();
 });
+
 messages.addEventListener('click',async e=>{
  const b=e.target.closest('.copycode');
- if(b){await copyText(b.closest('.codebox').querySelector('code').textContent);b.textContent='Copied!'}
-});
-$('sendBtn').onclick=()=>sendMessage();
-input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
-input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,150)+'px'});
-$('newChat').onclick=newChat;
-$('menuBtn').onclick=()=>{$('sidebar').classList.toggle('open');$('overlay').classList.toggle('show')};
-$('overlay').onclick=closeSidebar;
-function closeSidebar(){$('sidebar').classList.remove('open');$('overlay').classList.remove('show')}
-$('attachBtn').onclick=()=>$('attachMenu').classList.toggle('show');
-$('cameraBtn').onclick=()=>{$('attachMenu').classList.remove('show');$('cameraInput').click()};
-$('photoBtn').onclick=()=>{$('attachMenu').classList.remove('show');$('photoInput').click()};
-$('fileBtn').onclick=()=>{$('attachMenu').classList.remove('show');$('fileInput').click()};
-function setAttachment(file){
- if(!file)return;attachment=file;
- const preview=$('preview');preview.style.display='block';preview.innerHTML='';
- if(file.type.startsWith('image/')){
-  const img=document.createElement('img');img.src=URL.createObjectURL(file);preview.appendChild(img);
+ if(b){
+  await copyText(b.closest('.codebox').querySelector('code').textContent);
+  b.textContent='Copied!';
  }
+});
+
+$('sendBtn').onclick=()=>sendMessage();
+
+input.addEventListener('keydown',e=>{
+ if(e.key==='Enter'&&!e.shiftKey){
+  e.preventDefault();
+  sendMessage();
+ }
+});
+
+input.addEventListener('input',()=>{
+ input.style.height='auto';
+ input.style.height=Math.min(input.scrollHeight,150)+'px';
+});
+
+$('newChat').onclick=newChat;
+
+$('menuBtn').onclick=()=>{
+ $('sidebar').classList.toggle('open');
+ $('overlay').classList.toggle('show');
+};
+
+$('overlay').onclick=closeSidebar;
+
+function closeSidebar(){
+ $('sidebar').classList.remove('open');
+ $('overlay').classList.remove('show');
+}
+
+$('attachBtn').onclick=()=>$('attachMenu').classList.toggle('show');
+$('cameraBtn').onclick=()=>{
+ $('attachMenu').classList.remove('show');
+ $('cameraInput').click();
+};
+$('photoBtn').onclick=()=>{
+ $('attachMenu').classList.remove('show');
+ $('photoInput').click();
+};
+$('fileBtn').onclick=()=>{
+ $('attachMenu').classList.remove('show');
+ $('fileInput').click();
+};
+
+function setAttachment(file){
+ if(!file)return;
+ attachment=file;
+
+ const preview=$('preview');
+ preview.style.display='block';
+ preview.innerHTML='';
+
+ if(file.type.startsWith('image/')){
+  const img=document.createElement('img');
+  img.src=URL.createObjectURL(file);
+  preview.appendChild(img);
+ }
+
  preview.appendChild(document.createTextNode('📎 '+file.name+' — ready. Press Send when you want to attach it.'));
 }
-['cameraInput','photoInput','fileInput'].forEach(id=>$(id).addEventListener('change',e=>setAttachment(e.target.files[0])));
+
+['cameraInput','photoInput','fileInput'].forEach(id=>
+ $(id).addEventListener('change',e=>setAttachment(e.target.files[0]))
+);
+
 document.addEventListener('click',e=>{
  const prompt=e.target.closest('[data-prompt]');
  if(prompt)sendMessage(prompt.dataset.prompt);
 });
+
 $('micBtn').onclick=()=>{
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SpeechRecognition){showToast('Voice typing is not supported in this browser');return}
- const rec=new SpeechRecognition();rec.lang='en-US';rec.interimResults=false;
- rec.onresult=e=>{input.value+=(input.value?' ':'')+e.results[0][0].transcript};
+ if(!SpeechRecognition){
+  showToast('Voice typing is not supported in this browser');
+  return;
+ }
+ const rec=new SpeechRecognition();
+ rec.lang='en-US';
+ rec.interimResults=false;
+ rec.onresult=e=>{
+  input.value+=(input.value?' ':'')+e.results[0][0].transcript;
+ };
  rec.onerror=()=>showToast('Microphone unavailable. Check browser permission.');
  rec.start();
 };
-newChat();
+
+/* RESTORE SAVED CHATS WHEN NOVA OPENS */
+if(loadChats()){
+ renderChatList();
+ renderMessages();
+}else{
+ newChat();
+}
 </script>
 </body>
 </html>

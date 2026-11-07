@@ -3,17 +3,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080e1d">
 <title>NOVA AI</title>
 <style>
-:root{--bg:#080e1d;--panel:#101a2d;--panel2:#17243a;--text:#f3f6ff;--muted:#93a2bb;--blue:#3985ff;--border:#25334b}
+:root{--bg:#080e1d;--panel:#101a2d;--panel2:#192943;--text:#f3f6ff;--muted:#93a2bb;--blue:#3985ff;--border:#25334b}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial, sans-serif}
 button,textarea{font:inherit}
 button{cursor:pointer}
 .app{display:flex;height:100dvh;overflow:hidden}
-.sidebar{width:270px;background:#0b1425;border-right:1px solid var(--border);padding:17px;display:flex;flex-direction:column;flex-shrink:0;transition:transform .25s;z-index:20}
+.sidebar{width:270px;background:#0b1425;border-right:1px solid var(--border);padding:17px;display:flex;flex-direction:column;flex-shrink:0;z-index:20}
 .brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;margin:5px 0 25px}
 .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#1677ff,#64c4ff);display:grid;place-items:center;color:white;font-size:22px;font-weight:900}
 .newchat{background:var(--blue);border:0;color:white;padding:13px;border-radius:12px;font-weight:700}
@@ -23,7 +23,7 @@ button{cursor:pointer}
 .chatitem:hover,.chatitem.active{background:var(--panel2)}
 .sidebottom{border-top:1px solid var(--border);padding-top:12px;color:var(--muted);font-size:13px}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
-.topbar{height:60px;display:flex;align-items:center;padding:0 17px;border-bottom:1px solid var(--border);gap:13px}
+.topbar{height:60px;display:flex;align-items:center;padding:0 17px;border-bottom:1px solid var(--border);gap:13px;flex-shrink:0}
 .menu{background:none;border:0;color:white;font-size:23px}
 .topname{font-weight:700}
 .status{margin-left:auto;color:#7e9bc4;font-size:12px}
@@ -37,7 +37,7 @@ button{cursor:pointer}
 .message.user{flex-direction:row-reverse}
 .avatar{width:31px;height:31px;border-radius:10px;background:var(--panel2);display:grid;place-items:center;flex-shrink:0;font-size:14px}
 .message.assistant .avatar{background:#174b9a}
-.bubble{max-width:min(100%,720px);padding:13px 16px;border-radius:15px;background:var(--panel);line-height:1.65;overflow-wrap:anywhere}
+.bubble{max-width:min(100%,720px);padding:13px 16px;border-radius:15px;background:var(--panel);line-height:1.65;overflow-wrap:anywhere;user-select:text}
 .message.user .bubble{background:#173c70}
 .message-content p{margin:0 0 12px}
 .message-content p:last-child{margin-bottom:0}
@@ -57,15 +57,7 @@ button{cursor:pointer}
 .message-content table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
 .message-content th,.message-content td{border:1px solid #34435b;padding:8px;text-align:left}
 .message-content th{background:#1b2a42}
-.actions{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap}
-.actions button{background:transparent;border:0;color:var(--muted);padding:5px 7px;border-radius:6px;font-size:12px}
-.actions button:hover{background:var(--panel2);color:white}
-.thinking{color:#9bb9e8;font-size:13px;display:flex;gap:8px;align-items:center}
-.dots span{animation:blink 1.2s infinite;opacity:.2}
-.dots span:nth-child(2){animation-delay:.2s}
-.dots span:nth-child(3){animation-delay:.4s}
-@keyframes blink{50%{opacity:1}}
-.composer-area{padding:12px 16px 18px;background:linear-gradient(transparent,var(--bg) 20%)}
+.composer-area{padding:12px 16px 18px;background:linear-gradient(transparent,var(--bg) 20%);flex-shrink:0}
 .composer{max-width:850px;margin:auto;background:var(--panel);border:1px solid #34445f;border-radius:17px;padding:10px;display:flex;align-items:flex-end;gap:8px}
 .composer textarea{flex:1;resize:none;max-height:150px;min-height:40px;background:transparent;border:0;outline:0;color:white;padding:10px}
 .toolbtn{background:var(--panel2);border:0;color:white;border-radius:10px;padding:10px;font-size:18px}
@@ -77,9 +69,19 @@ button{cursor:pointer}
 .attachmenu button:hover{background:#263956}
 .preview{max-width:850px;margin:0 auto 8px;display:none;background:var(--panel);padding:9px;border-radius:10px;color:#cbd6e9;font-size:13px}
 .preview img{max-width:90px;max-height:75px;object-fit:cover;border-radius:7px;vertical-align:middle;margin-right:8px}
+.thinking{color:#9bb9e8;font-size:13px}
+.dots span{animation:blink 1.2s infinite;opacity:.2}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{50%{opacity:1}}
+.message-menu{display:none;position:fixed;z-index:1000;background:#192943;border:1px solid #405574;border-radius:12px;padding:6px;min-width:165px;box-shadow:0 12px 35px #0009}
+.message-menu.show{display:grid}
+.message-menu button{border:0;background:transparent;color:white;text-align:left;padding:11px;border-radius:8px;font-size:14px}
+.message-menu button:hover{background:#2a4162}
+.toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#203450;color:white;padding:10px 16px;border-radius:20px;font-size:13px;z-index:1100;display:none}
 .overlay{display:none}
 @media(max-width:700px){
-.sidebar{position:absolute;top:0;bottom:0;left:0;transform:translateX(-105%);box-shadow:10px 0 30px #0008}
+.sidebar{position:absolute;top:0;bottom:0;left:0;transform:translateX(-105%);transition:transform .25s;box-shadow:10px 0 30px #0008}
 .sidebar.open{transform:translateX(0)}
 .overlay.show{display:block;position:absolute;inset:0;background:#0008;z-index:15}
 .messages{padding:20px 12px}
@@ -123,7 +125,7 @@ button{cursor:pointer}
    <button class="toolbtn" id="attachBtn" title="Attach">＋</button>
    <textarea id="input" rows="1" placeholder="Message NOVA AI..."></textarea>
    <button class="toolbtn" id="micBtn" title="Voice typing">🎙</button>
-   <button class="sendbtn" id="sendBtn">Send</button>
+   <button class="sendbtn" id="sendBtn">Send ↑</button>
   </div>
   <div class="disclaimer">NOVA AI can make mistakes. Check important information.</div>
  </div>
@@ -134,6 +136,10 @@ button{cursor:pointer}
  </div>
 </main>
 </div>
+
+<div class="message-menu" id="messageMenu"></div>
+<div class="toast" id="toast"></div>
+
 <input hidden type="file" id="cameraInput" accept="image/*" capture="environment">
 <input hidden type="file" id="photoInput" accept="image/*">
 <input hidden type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xls,.xlsx,.ppt,.pptx">
@@ -142,18 +148,17 @@ button{cursor:pointer}
 const $=id=>document.getElementById(id);
 const messages=$('messages'),input=$('input');
 let chats=[],currentChat=null,attachment=null,thinking=false;
+let holdTimer=null,heldRow=null,menuIndex=null,toastTimer=null;
 
 function newChat(){
  currentChat={id:Date.now(),title:'New chat',items:[]};
  chats.unshift(currentChat);
- renderChatList();
- showWelcome();
- closeSidebar();
+ renderChatList();showWelcome();closeSidebar();
 }
 function showWelcome(){
  messages.innerHTML='';
  const w=document.createElement('div');
- w.className='welcome';w.id='welcome';
+ w.className='welcome';
  w.innerHTML='<div class="logo" style="margin:auto;width:55px;height:55px;font-size:30px">N</div><h1>What can I help you with?</h1><p>Your AI. Your World.</p><div class="suggestions"><button data-prompt="Explain something in a simple way">Explain something</button><button data-prompt="Help me write something">Help me write</button><button data-prompt="Give me creative ideas">Creative ideas</button></div>';
  messages.appendChild(w);
 }
@@ -168,6 +173,7 @@ function renderChatList(){
  });
 }
 function renderMessages(){
+ closeMessageMenu();
  messages.innerHTML='';
  if(!currentChat||!currentChat.items.length){showWelcome();return}
  currentChat.items.forEach((item,index)=>addMessageElement(item,index));
@@ -185,7 +191,6 @@ function inlineMarkdown(s){
  x=x.replace(/_(.+?)_/g,'<em>$1</em>');
  x=x.replace(/~~(.+?)~~/g,'<del>$1</del>');
  x=x.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,(_,label,url)=>'<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+label+'</a>');
- x=x.replace(/(^|[\s>])(https?:\/\/[^\s<]+)/g,'$1<a href="$2" target="_blank" rel="noopener noreferrer">$2</a>');
  return x;
 }
 function renderMarkdown(source){
@@ -194,8 +199,7 @@ function renderMarkdown(source){
  function flushP(){if(paragraph.length){out+='<p>'+paragraph.map(inlineMarkdown).join('<br>')+'</p>';paragraph=[]}}
  function flushList(){if(listItems.length){out+='<'+listType+'>'+listItems.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+listType+'>';listItems=[];listType=''}}
  function flushCode(){
-  const codeText=codeLines.join('\n');
-  out+='<div class="codebox"><div class="codehead"><span>'+escapeHTML(lang||'Code')+'</span><button type="button" class="copycode">Copy code</button></div><pre><code>'+escapeHTML(codeText)+'</code></pre></div>';
+  out+='<div class="codebox"><div class="codehead"><span>'+escapeHTML(lang||'Code')+'</span><button type="button" class="copycode">Copy code</button></div><pre><code>'+escapeHTML(codeLines.join('\n'))+'</code></pre></div>';
   codeLines=[];lang='';
  }
  for(let i=0;i<lines.length;i++){
@@ -208,16 +212,23 @@ function renderMarkdown(source){
   if(code){codeLines.push(line);continue}
   if(!line.trim()){flushP();flushList();continue}
   const heading=line.match(/^(#{1,3})\s+(.+)$/);
-  if(heading){flushP();flushList();const n=heading[1].length;out+='<h'+n+'>'+inlineMarkdown(heading[2])+'</h'+n+'>';continue}
+  if(heading){flushP();flushList();let n=heading[1].length;out+='<h'+n+'>'+inlineMarkdown(heading[2])+'</h'+n+'>';continue}
   if(/^[-*_]{3,}$/.test(line.trim())){flushP();flushList();out+='<hr>';continue}
   const quote=line.match(/^>\s?(.*)$/);
   if(quote){flushP();flushList();out+='<blockquote>'+inlineMarkdown(quote[1])+'</blockquote>';continue}
-  const ul=line.match(/^\s*[-*+]\s+(.+)$/);
-  const ol=line.match(/^\s*\d+\.\s+(.+)$/);
+  const ul=line.match(/^\s*[-*+]\s+(.+)$/),ol=line.match(/^\s*\d+\.\s+(.+)$/);
   if(ul||ol){
-   flushP();const type=ul?'ul':'ol';
+   flushP();let type=ul?'ul':'ol';
    if(listType&&listType!==type)flushList();
    listType=type;listItems.push((ul||ol)[1]);continue;
+  }
+  if(line.includes('|')&&i+1<lines.length&&/^\s*\|?[\s:-]+\|[\s|:-]*$/.test(lines[i+1])){
+   flushP();flushList();
+   const cells=s=>s.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(v=>v.trim());
+   const headers=cells(line);i++;
+   out+='<table><thead><tr>'+headers.map(v=>'<th>'+inlineMarkdown(v)+'</th>').join('')+'</tr></thead><tbody>';
+   while(i+1<lines.length&&lines[i+1].includes('|')){i++;out+='<tr>'+cells(lines[i]).map(v=>'<td>'+inlineMarkdown(v)+'</td>').join('')+'</tr>'}
+   out+='</tbody></table>';continue;
   }
   flushList();paragraph.push(line);
  }
@@ -226,7 +237,7 @@ function renderMarkdown(source){
 }
 function addMessageElement(item,index){
  const row=document.createElement('div');
- row.className='message '+item.role;
+ row.className='message '+item.role;row.dataset.index=index;
  const avatar=document.createElement('div');
  avatar.className='avatar';avatar.textContent=item.role==='user'?'You':'N';
  const body=document.createElement('div');
@@ -235,19 +246,9 @@ function addMessageElement(item,index){
  if(item.role==='assistant')content.innerHTML=renderMarkdown(item.text);
  else content.textContent=item.text;
  if(item.fileName){
-  const f=document.createElement('div');f.style.marginTop='8px';f.textContent='📎 '+item.fileName;
-  content.appendChild(f);
+  const f=document.createElement('div');f.style.marginTop='8px';f.textContent='📎 '+item.fileName;content.appendChild(f);
  }
  bubble.appendChild(content);body.appendChild(bubble);
- if(item.role==='assistant'){
-  const actions=document.createElement('div');actions.className='actions';
-  actions.innerHTML='<button data-action="copy">Copy</button><button data-action="regenerate">Regenerate</button><button data-action="like">👍</button><button data-action="dislike">👎</button>';
-  body.appendChild(actions);
- }else{
-  const actions=document.createElement('div');actions.className='actions';
-  actions.innerHTML='<button data-action="edit">Edit</button><button data-action="copy">Copy</button>';
-  body.appendChild(actions);
- }
  row.append(avatar,body);messages.appendChild(row);
 }
 function addMessage(role,text,fileName){
@@ -256,10 +257,10 @@ function addMessage(role,text,fileName){
  addMessageElement(item,currentChat.items.length-1);
  messages.scrollTop=messages.scrollHeight;
 }
-function renderChatListTitle(){
+function updateTitle(){
  if(currentChat&&currentChat.title==='New chat'){
   const first=currentChat.items.find(x=>x.role==='user');
-  if(first){currentChat.title=first.text.slice(0, thirty=32)||'New chat';renderChatList()}
+  if(first){currentChat.title=first.text.slice(0,32)||'New chat';renderChatList()}
  }
 }
 function showThinking(){
@@ -267,89 +268,134 @@ function showThinking(){
  row.innerHTML='<div class="avatar">N</div><div class="bubble"><div class="thinking">NOVA is thinking <span class="dots"><span>●</span> <span>●</span> <span>●</span></span></div></div>';
  messages.appendChild(row);messages.scrollTop=messages.scrollHeight;
 }
-function demoReply(){
- return "I'm NOVA AI, and this is currently my demo mode. ✨\n\nMy chat interface is working, but my real AI connection has not been activated yet.\n\n**What we're building next:**\n- Natural AI conversations\n- Web search and citations\n- Voice and file understanding\n\nYour messages are not being sent to an AI service yet.";
+function demoReply(userText){
+ return "Thanks for your message! I have received: **"+userText.slice(0,180)+"**\n\nNOVA AI is still in demonstration mode, so it cannot provide a real AI-generated answer yet. Our next major step is connecting a suitable AI service so NOVA can understand questions and respond naturally.";
 }
 function sendMessage(textOverride){
  const text=(textOverride!==undefined?textOverride:input.value).trim();
  if((!text&&!attachment)||thinking)return;
  if(!currentChat)newChat();
- const file=attachment;
- const fileName=file?file.name:'';
+ const file=attachment,fileName=file?file.name:'';
  addMessage('user',text,fileName);
- input.value='';input.style.height='auto';
- attachment=null;$('preview').style.display='none';
- renderChatListTitle();thinking=true;
- showThinking();
+ input.value='';input.style.height='auto';attachment=null;
+ $('preview').style.display='none';updateTitle();thinking=true;showThinking();
  setTimeout(()=>{
   const t=$('thinkingRow');if(t)t.remove();
-  const reply=demoReply();
-  addMessage('assistant',reply);
-  currentChat.items.push(); // no-op
+  addMessage('assistant',demoReply(text||'your attachment'));
   thinking=false;
- },1200);
+ },1000);
 }
-$('sendBtn').onclick=()=>sendMessage();
-input.addEventListener('keydown',e=>{
- if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}
+function showToast(message){
+ $('toast').textContent=message;$('toast').style.display='block';
+ clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').style.display='none',1600);
+}
+async function copyText(text){
+ try{await navigator.clipboard.writeText(text)}
+ catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}
+ showToast('Copied to clipboard');
+}
+function closeMessageMenu(){
+ $('messageMenu').classList.remove('show');menuIndex=null;heldRow=null;
+}
+function openMessageMenu(row,x,y){
+ if(!row||!currentChat)return;
+ closeMessageMenu();
+ heldRow=row;menuIndex=Number(row.dataset.index);
+ const item=currentChat.items[menuIndex];
+ const menu=$('messageMenu');menu.innerHTML='';
+ const options=item.role==='user'?
+  [['copy','📋 Copy'],['edit','✏️ Edit message']]:
+  [['copy','📋 Copy'],['regenerate','🔄 Regenerate'],['like','👍 Good response'],['dislike','👎 Poor response']];
+ options.forEach(([action,label])=>{
+  const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.action=action;menu.appendChild(b);
+ });
+ menu.classList.add('show');
+ const w=menu.offsetWidth,h=menu.offsetHeight;
+ menu.style.left=Math.max(8,Math.min(x,innerWidth-w-8))+'px';
+ menu.style.top=Math.max(8,Math.min(y,innerHeight-h-8))+'px';
+}
+function performMenuAction(action){
+ if(menuIndex===null||!currentChat)return;
+ const index=menuIndex,item=currentChat.items[index];
+ closeMessageMenu();
+ if(action==='copy'){copyText(item.text);return}
+ if(action==='edit'&&item.role==='user'){
+  input.value=item.text;input.focus();
+  currentChat.items.splice(index);
+  renderMessages();return;
+ }
+ if(action==='like'||action==='dislike'){showToast(action==='like'?'Thanks for your feedback':'Thanks for your feedback');return}
+ if(action==='regenerate'&&item.role==='assistant'){
+  if(thinking)return;
+  currentChat.items.splice(index);
+  renderMessages();thinking=true;showThinking();
+  setTimeout(()=>{
+   const t=$('thinkingRow');if(t)t.remove();
+   const previous=[...currentChat.items].reverse().find(x=>x.role==='user');
+   addMessage('assistant',demoReply(previous?previous.text:'your message'));
+   thinking=false;
+  },1000);
+ }
+}
+let startX=0,startY=0;
+messages.addEventListener('pointerdown',e=>{
+ const row=e.target.closest('.message');
+ if(!row||e.target.closest('button'))return;
+ if(e.pointerType==='mouse')return;
+ startX=e.clientX;startY=e.clientY;
+ clearTimeout(holdTimer);
+ holdTimer=setTimeout(()=>openMessageMenu(row,startX,startY),600);
 });
+messages.addEventListener('pointermove',e=>{
+ if(Math.abs(e.clientX-startX)>12||Math.abs(e.clientY-startY)>12)clearTimeout(holdTimer);
+});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>messages.addEventListener(ev,()=>clearTimeout(holdTimer)));
+messages.addEventListener('contextmenu',e=>{
+ const row=e.target.closest('.message');
+ if(!row)return;
+ e.preventDefault();openMessageMenu(row,e.clientX,e.clientY);
+});
+$('messageMenu').addEventListener('click',e=>{
+ const b=e.target.closest('[data-action]');
+ if(b)performMenuAction(b.dataset.action);
+});
+document.addEventListener('click',e=>{
+ if(!e.target.closest('#messageMenu')&&!e.target.closest('.message'))closeMessageMenu();
+});
+messages.addEventListener('click',async e=>{
+ const b=e.target.closest('.copycode');
+ if(b){await copyText(b.closest('.codebox').querySelector('code').textContent);b.textContent='Copied!'}
+});
+$('sendBtn').onclick=()=>sendMessage();
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
 input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,150)+'px'});
 $('newChat').onclick=newChat;
 $('menuBtn').onclick=()=>{$('sidebar').classList.toggle('open');$('overlay').classList.toggle('show')};
 $('overlay').onclick=closeSidebar;
 function closeSidebar(){$('sidebar').classList.remove('open');$('overlay').classList.remove('show')}
-$('attachBtn').onclick=()=> $('attachMenu').classList.toggle('show');
+$('attachBtn').onclick=()=>$('attachMenu').classList.toggle('show');
 $('cameraBtn').onclick=()=>{$('attachMenu').classList.remove('show');$('cameraInput').click()};
 $('photoBtn').onclick=()=>{$('attachMenu').classList.remove('show');$('photoInput').click()};
 $('fileBtn').onclick=()=>{$('attachMenu').classList.remove('show');$('fileInput').click()};
 function setAttachment(file){
- if(!file)return;
- attachment=file;
+ if(!file)return;attachment=file;
  const preview=$('preview');preview.style.display='block';preview.innerHTML='';
  if(file.type.startsWith('image/')){
   const img=document.createElement('img');img.src=URL.createObjectURL(file);preview.appendChild(img);
  }
- preview.appendChild(document.createTextNode('📎 '+file.name+' — ready to attach. Press Send when ready.'));
+ preview.appendChild(document.createTextNode('📎 '+file.name+' — ready. Press Send when you want to attach it.'));
 }
 ['cameraInput','photoInput','fileInput'].forEach(id=>$(id).addEventListener('change',e=>setAttachment(e.target.files[0])));
-messages.addEventListener('click',async e=>{
- const codeBtn=e.target.closest('.copycode');
- if(codeBtn){
-  const code=codeBtn.closest('.codebox').querySelector('code').textContent;
-  await copyText(code);codeBtn.textContent='Copied!';return;
- }
- const btn=e.target.closest('[data-action]');if(!btn)return;
- const row=btn.closest('.message');const rows=[...messages.querySelectorAll('.message')];
- const rowIndex=rows.indexOf(row);const item=currentChat.items[rowIndex];
- const action=btn.dataset.action;
- if(action==='copy')await copyText(item.text);
- if(action==='like'||action==='dislike'){btn.textContent=action==='like'?'👍 Thanks':'👎 Thanks'}
- if(action==='edit'){
-  input.value=item.text;input.focus();
-  currentChat.items.splice(rowIndex,1);renderMessages();
- }
- if(action==='regenerate'){
-  if(thinking)return;
-  const next=currentChat.items[rowIndex+1];
-  if(next&&next.role==='assistant')currentChat.items.splice(rowIndex+1,1);
-  renderMessages();thinking=true;showThinking();
-  setTimeout(()=>{const t=$('thinkingRow');if(t)t.remove();addMessage('assistant',demoReply());thinking=false},1200);
- }
-});
-async function copyText(text){
- try{await navigator.clipboard.writeText(text)}
- catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}
-}
 document.addEventListener('click',e=>{
  const prompt=e.target.closest('[data-prompt]');
  if(prompt)sendMessage(prompt.dataset.prompt);
 });
 $('micBtn').onclick=()=>{
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SpeechRecognition){alert('Voice typing is not supported by this browser.');return}
+ if(!SpeechRecognition){showToast('Voice typing is not supported in this browser');return}
  const rec=new SpeechRecognition();rec.lang='en-US';rec.interimResults=false;
  rec.onresult=e=>{input.value+=(input.value?' ':'')+e.results[0][0].transcript};
- rec.onerror=()=>alert('Microphone unavailable. Check browser microphone permission.');
+ rec.onerror=()=>showToast('Microphone unavailable. Check browser permission.');
  rec.start();
 };
 newChat();

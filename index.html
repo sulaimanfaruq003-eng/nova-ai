@@ -9,9 +9,8 @@
 <style>
 :root{--bg:#080e1d;--panel:#101a2d;--panel2:#192943;--text:#f3f6ff;--muted:#93a2bb;--blue:#3985ff;--border:#25334b}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial, sans-serif}
-button,textarea{font:inherit}
-button{cursor:pointer}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+button,textarea{font:inherit}button{cursor:pointer}
 .app{display:flex;height:100dvh;overflow:hidden}
 .sidebar{width:270px;background:#0b1425;border-right:1px solid var(--border);padding:17px;display:flex;flex-direction:column;flex-shrink:0;z-index:20}
 .brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;margin:5px 0 25px}
@@ -25,26 +24,21 @@ button{cursor:pointer}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
 .topbar{height:60px;display:flex;align-items:center;padding:0 17px;border-bottom:1px solid var(--border);gap:13px;flex-shrink:0}
 .menu{background:none;border:0;color:white;font-size:23px}
-.topname{font-weight:700}
-.status{margin-left:auto;color:#7e9bc4;font-size:12px}
+.topname{font-weight:700}.status{margin-left:auto;color:#7e9bc4;font-size:12px}
 .messages{flex:1;overflow-y:auto;padding:25px 18px 30px}
 .welcome{max-width:720px;margin:13vh auto 0;text-align:center}
-.welcome h1{font-size:32px;margin-bottom:10px}
-.welcome p{color:var(--muted)}
+.welcome h1{font-size:32px;margin-bottom:10px}.welcome p{color:var(--muted)}
 .suggestions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:28px}
 .suggestions button{background:var(--panel);border:1px solid var(--border);color:#dce7fb;padding:11px 14px;border-radius:12px}
 .message{max-width:850px;margin:0 auto 25px;display:flex;gap:12px;align-items:flex-start}
 .message.user{flex-direction:row-reverse}
 .avatar{width:31px;height:31px;border-radius:10px;background:var(--panel2);display:grid;place-items:center;flex-shrink:0;font-size:14px}
 .message.assistant .avatar{background:#174b9a}
-.bubble{max-width:min(100%,720px);padding:13px 16px;border-radius:15px;background:var(--panel);line-height:1.65;overflow-wrap:anywhere;user-select:text}
+.bubble{max-width:min(100%,720px);padding:13px 16px;border-radius:15px;background:var(--panel);line-height:1.65;overflow-wrap:anywhere}
 .message.user .bubble{background:#173c70}
-.message-content p{margin:0 0 12px}
-.message-content p:last-child{margin-bottom:0}
+.message-content p{margin:0 0 12px}.message-content p:last-child{margin-bottom:0}
 .message-content h1,.message-content h2,.message-content h3{line-height:1.3;margin:18px 0 9px}
-.message-content h1{font-size:1.5em}
-.message-content h2{font-size:1.3em}
-.message-content h3{font-size:1.12em}
+.message-content h1{font-size:1.5em}.message-content h2{font-size:1.3em}.message-content h3{font-size:1.12em}
 .message-content ul,.message-content ol{padding-left:24px}
 .message-content li{margin:5px 0}
 .message-content blockquote{border-left:3px solid var(--blue);margin:12px 0;padding:5px 12px;color:#bdcce3}
@@ -71,8 +65,7 @@ button{cursor:pointer}
 .preview img{max-width:90px;max-height:75px;object-fit:cover;border-radius:7px;vertical-align:middle;margin-right:8px}
 .thinking{color:#9bb9e8;font-size:13px}
 .dots span{animation:blink 1.2s infinite;opacity:.2}
-.dots span:nth-child(2){animation-delay:.2s}
-.dots span:nth-child(3){animation-delay:.4s}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
 @keyframes blink{50%{opacity:1}}
 .message-menu{display:none;position:fixed;z-index:1000;background:#192943;border:1px solid #405574;border-radius:12px;padding:6px;min-width:165px;box-shadow:0 12px 35px #0009}
 .message-menu.show{display:grid}
@@ -84,10 +77,8 @@ button{cursor:pointer}
 .sidebar{position:absolute;top:0;bottom:0;left:0;transform:translateX(-105%);transition:transform .25s;box-shadow:10px 0 30px #0008}
 .sidebar.open{transform:translateX(0)}
 .overlay.show{display:block;position:absolute;inset:0;background:#0008;z-index:15}
-.messages{padding:20px 12px}
-.welcome{margin-top:12vh}
-.welcome h1{font-size:27px}
-.composer-area{padding:9px 10px 13px}
+.messages{padding:20px 12px}.welcome{margin-top:12vh}
+.welcome h1{font-size:27px}.composer-area{padding:9px 10px 13px}
 }
 </style>
 </head>
@@ -108,10 +99,9 @@ button{cursor:pointer}
   <div class="status">Demo mode</div>
  </header>
  <section class="messages" id="messages">
-  <div class="welcome" id="welcome">
+  <div class="welcome">
    <div class="logo" style="margin:auto;width:55px;height:55px;font-size:30px">N</div>
-   <h1>What can I help you with?</h1>
-   <p>Your AI. Your World.</p>
+   <h1>What can I help you with?</h1><p>Your AI. Your World.</p>
    <div class="suggestions">
     <button data-prompt="Explain something in a simple way">Explain something</button>
     <button data-prompt="Help me write something">Help me write</button>
@@ -136,10 +126,8 @@ button{cursor:pointer}
  </div>
 </main>
 </div>
-
 <div class="message-menu" id="messageMenu"></div>
 <div class="toast" id="toast"></div>
-
 <input hidden type="file" id="cameraInput" accept="image/*" capture="environment">
 <input hidden type="file" id="photoInput" accept="image/*">
 <input hidden type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xls,.xlsx,.ppt,.pptx">
@@ -148,17 +136,15 @@ button{cursor:pointer}
 const $=id=>document.getElementById(id);
 const messages=$('messages'),input=$('input');
 let chats=[],currentChat=null,attachment=null,thinking=false;
-let holdTimer=null,heldRow=null,menuIndex=null,toastTimer=null;
+let holdTimer=null,menuIndex=null,toastTimer=null;
 
 function newChat(){
  currentChat={id:Date.now(),title:'New chat',items:[]};
- chats.unshift(currentChat);
- renderChatList();showWelcome();closeSidebar();
+ chats.unshift(currentChat);renderChatList();showWelcome();closeSidebar();
 }
 function showWelcome(){
  messages.innerHTML='';
- const w=document.createElement('div');
- w.className='welcome';
+ const w=document.createElement('div');w.className='welcome';
  w.innerHTML='<div class="logo" style="margin:auto;width:55px;height:55px;font-size:30px">N</div><h1>What can I help you with?</h1><p>Your AI. Your World.</p><div class="suggestions"><button data-prompt="Explain something in a simple way">Explain something</button><button data-prompt="Help me write something">Help me write</button><button data-prompt="Give me creative ideas">Creative ideas</button></div>';
  messages.appendChild(w);
 }
@@ -173,8 +159,7 @@ function renderChatList(){
  });
 }
 function renderMessages(){
- closeMessageMenu();
- messages.innerHTML='';
+ closeMessageMenu();messages.innerHTML='';
  if(!currentChat||!currentChat.items.length){showWelcome();return}
  currentChat.items.forEach((item,index)=>addMessageElement(item,index));
  messages.scrollTop=messages.scrollHeight;
@@ -198,10 +183,7 @@ function renderMarkdown(source){
  let out='',paragraph=[],listType='',listItems=[],code=false,codeLines=[],lang='';
  function flushP(){if(paragraph.length){out+='<p>'+paragraph.map(inlineMarkdown).join('<br>')+'</p>';paragraph=[]}}
  function flushList(){if(listItems.length){out+='<'+listType+'>'+listItems.map(x=>'<li>'+inlineMarkdown(x)+'</li>').join('')+'</'+listType+'>';listItems=[];listType=''}}
- function flushCode(){
-  out+='<div class="codebox"><div class="codehead"><span>'+escapeHTML(lang||'Code')+'</span><button type="button" class="copycode">Copy code</button></div><pre><code>'+escapeHTML(codeLines.join('\n'))+'</code></pre></div>';
-  codeLines=[];lang='';
- }
+ function flushCode(){out+='<div class="codebox"><div class="codehead"><span>'+escapeHTML(lang||'Code')+'</span><button type="button" class="copycode">Copy code</button></div><pre><code>'+escapeHTML(codeLines.join('\n'))+'</code></pre></div>';codeLines=[];lang=''}
  for(let i=0;i<lines.length;i++){
   const line=lines[i];
   if(line.trim().startsWith('```')){
@@ -236,25 +218,21 @@ function renderMarkdown(source){
  return out;
 }
 function addMessageElement(item,index){
- const row=document.createElement('div');
- row.className='message '+item.role;row.dataset.index=index;
- const avatar=document.createElement('div');
- avatar.className='avatar';avatar.textContent=item.role==='user'?'You':'N';
- const body=document.createElement('div');
- const bubble=document.createElement('div');bubble.className='bubble';
+ const row=document.createElement('div');row.className='message '+item.role;row.dataset.index=index;
+ const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=item.role==='user'?'You':'N';
+ const body=document.createElement('div'),bubble=document.createElement('div');
+ bubble.className='bubble';
  const content=document.createElement('div');content.className='message-content';
  if(item.role==='assistant')content.innerHTML=renderMarkdown(item.text);
  else content.textContent=item.text;
  if(item.fileName){
   const f=document.createElement('div');f.style.marginTop='8px';f.textContent='📎 '+item.fileName;content.appendChild(f);
  }
- bubble.appendChild(content);body.appendChild(bubble);
- row.append(avatar,body);messages.appendChild(row);
+ bubble.appendChild(content);body.appendChild(bubble);row.append(avatar,body);messages.appendChild(row);
 }
 function addMessage(role,text,fileName){
  const item={role,text,fileName:fileName||''};
- currentChat.items.push(item);
- addMessageElement(item,currentChat.items.length-1);
+ currentChat.items.push(item);addMessageElement(item,currentChat.items.length-1);
  messages.scrollTop=messages.scrollHeight;
 }
 function updateTitle(){
@@ -269,7 +247,7 @@ function showThinking(){
  messages.appendChild(row);messages.scrollTop=messages.scrollHeight;
 }
 function demoReply(userText){
- return "Thanks for your message! I have received: **"+userText.slice(0,180)+"**\n\nNOVA AI is still in demonstration mode, so it cannot provide a real AI-generated answer yet. Our next major step is connecting a suitable AI service so NOVA can understand questions and respond naturally.";
+ return "Thanks for your message! I have received: **"+userText.slice(0,180)+"**\n\nNOVA AI is currently in demonstration mode. It needs a real AI connection before it can understand questions and generate natural answers.";
 }
 function sendMessage(textOverride){
  const text=(textOverride!==undefined?textOverride:input.value).trim();
@@ -277,8 +255,8 @@ function sendMessage(textOverride){
  if(!currentChat)newChat();
  const file=attachment,fileName=file?file.name:'';
  addMessage('user',text,fileName);
- input.value='';input.style.height='auto';attachment=null;
- $('preview').style.display='none';updateTitle();thinking=true;showThinking();
+ input.value='';input.style.height='auto';attachment=null;$('preview').style.display='none';
+ updateTitle();thinking=true;showThinking();
  setTimeout(()=>{
   const t=$('thinkingRow');if(t)t.remove();
   addMessage('assistant',demoReply(text||'your attachment'));
@@ -295,17 +273,16 @@ async function copyText(text){
  showToast('Copied to clipboard');
 }
 function closeMessageMenu(){
- $('messageMenu').classList.remove('show');menuIndex=null;heldRow=null;
+ $('messageMenu').classList.remove('show');menuIndex=null;
 }
 function openMessageMenu(row,x,y){
  if(!row||!currentChat)return;
- closeMessageMenu();
- heldRow=row;menuIndex=Number(row.dataset.index);
- const item=currentChat.items[menuIndex];
- const menu=$('messageMenu');menu.innerHTML='';
+ closeMessageMenu();menuIndex=Number(row.dataset.index);
+ const item=currentChat.items[menuIndex],menu=$('messageMenu');
+ menu.innerHTML='';
  const options=item.role==='user'?
-  [['copy','📋 Copy'],['edit','✏️ Edit message']]:
-  [['copy','📋 Copy'],['regenerate','🔄 Regenerate'],['like','👍 Good response'],['dislike','👎 Poor response']];
+ [['copy','📋 Copy'],['edit','✏️ Edit message']]:
+ [['copy','📋 Copy'],['regenerate','🔄 Regenerate'],['like','👍 Good response'],['dislike','👎 Poor response']];
  options.forEach(([action,label])=>{
   const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.action=action;menu.appendChild(b);
  });
@@ -321,14 +298,15 @@ function performMenuAction(action){
  if(action==='copy'){copyText(item.text);return}
  if(action==='edit'&&item.role==='user'){
   input.value=item.text;input.focus();
-  currentChat.items.splice(index);
-  renderMessages();return;
+  currentChat.items.splice(index);renderMessages();return;
  }
- if(action==='like'||action==='dislike'){showToast(action==='like'?'Thanks for your feedback':'Thanks for your feedback');return}
+ if(action==='like'||action==='dislike'){
+  item.feedback=action;
+  return;
+ }
  if(action==='regenerate'&&item.role==='assistant'){
   if(thinking)return;
-  currentChat.items.splice(index);
-  renderMessages();thinking=true;showThinking();
+  currentChat.items.splice(index);renderMessages();thinking=true;showThinking();
   setTimeout(()=>{
    const t=$('thinkingRow');if(t)t.remove();
    const previous=[...currentChat.items].reverse().find(x=>x.role==='user');
@@ -340,8 +318,7 @@ function performMenuAction(action){
 let startX=0,startY=0;
 messages.addEventListener('pointerdown',e=>{
  const row=e.target.closest('.message');
- if(!row||e.target.closest('button'))return;
- if(e.pointerType==='mouse')return;
+ if(!row||e.target.closest('button')||e.pointerType==='mouse')return;
  startX=e.clientX;startY=e.clientY;
  clearTimeout(holdTimer);
  holdTimer=setTimeout(()=>openMessageMenu(row,startX,startY),600);
@@ -351,13 +328,11 @@ messages.addEventListener('pointermove',e=>{
 });
 ['pointerup','pointercancel','pointerleave'].forEach(ev=>messages.addEventListener(ev,()=>clearTimeout(holdTimer)));
 messages.addEventListener('contextmenu',e=>{
- const row=e.target.closest('.message');
- if(!row)return;
+ const row=e.target.closest('.message');if(!row)return;
  e.preventDefault();openMessageMenu(row,e.clientX,e.clientY);
 });
 $('messageMenu').addEventListener('click',e=>{
- const b=e.target.closest('[data-action]');
- if(b)performMenuAction(b.dataset.action);
+ const b=e.target.closest('[data-action]');if(b)performMenuAction(b.dataset.action);
 });
 document.addEventListener('click',e=>{
  if(!e.target.closest('#messageMenu')&&!e.target.closest('.message'))closeMessageMenu();

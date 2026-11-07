@@ -178,13 +178,14 @@ function loadChats(){
   const data=JSON.parse(saved);
   if(!data||!Array.isArray(data.chats))return false;
   chats=data.chats.filter(chat=>chat&&Array.isArray(chat.items));
+  chats.forEach(chat=>{if(typeof chat.pinned!=='boolean')chat.pinned=false});
   currentChat=chats.find(chat=>String(chat.id)===String(data.currentChatId))||chats[0]||null;
   return chats.length>0;
  }catch(error){chats=[];currentChat=null;return false}
 }
 
 function newChat(){
- currentChat={id:Date.now(),title:'New chat',items:[]};
+ currentChat={id:Date.now(),title:'New chat',items:[],pinned:false};
  chats.unshift(currentChat);
  saveChats();
  renderChatList();
@@ -200,7 +201,7 @@ function showWelcome(){
  messages.appendChild(w);
 }
 
-/* CHAT SEARCH */
+/* CHAT SEARCH + PINNED CHATS */
 function renderChatList(){
  const list=$('chatList');
  list.innerHTML='';
@@ -209,13 +210,18 @@ function renderChatList(){
 
  const filteredChats=chats.filter(chat=>{
   if(!query)return true;
-
   const title=(chat.title||'New chat').toLowerCase();
   const content=(chat.items||[]).map(item=>
    (item.text||'')+' '+(item.fileName||'')
   ).join(' ').toLowerCase();
-
   return title.includes(query)||content.includes(query);
+ });
+
+ /* Pinned chats always appear first */
+ filteredChats.sort((a,b)=>{
+  if(a.pinned&&!b.pinned)return -1;
+  if(!a.pinned&&b.pinned)return 1;
+  return 0;
  });
 
  if(!filteredChats.length){
@@ -232,7 +238,7 @@ function renderChatList(){
 
   const el=document.createElement('div');
   el.className='chatitem'+(currentChat&&chat.id===currentChat.id?' active':'');
-  el.textContent=chat.title||'New chat';
+  el.textContent=(chat.pinned?'📌 ':'')+(chat.title||'New chat');
   el.title=chat.title||'New chat';
   el.onclick=()=>{
    currentChat=chat;
@@ -464,7 +470,7 @@ function exportAllChats(){
  showToast('All chats exported');
 }
 
-/* CHAT OPTIONS: RENAME, EXPORT AND DELETE */
+/* CHAT OPTIONS: PIN, UNPIN, RENAME, EXPORT AND DELETE */
 function closeChatActions(){
  $('chatActions').classList.remove('show');
  selectedChatId=null;
@@ -473,10 +479,14 @@ function closeChatActions(){
 function openChatActions(chatId,button){
  closeChatActions();
  selectedChatId=chatId;
+ const chat=chats.find(c=>String(c.id)===String(chatId));
+ if(!chat)return;
+
  const menu=$('chatActions');
  menu.innerHTML='';
 
  const options=[
+  [chat.pinned?'unpin':'pin',chat.pinned?'📌 Unpin chat':'📌 Pin chat'],
   ['rename','✏️ Rename chat'],
   ['export','📤 Export chat'],
   ['delete','🗑️ Delete chat']
@@ -502,6 +512,18 @@ function performChatAction(action){
  const chat=chats.find(c=>String(c.id)===String(selectedChatId));
  closeChatActions();
  if(!chat)return;
+
+ if(action==='pin'){
+  chat.pinned=true;
+  saveChats();renderChatList();showToast('Chat pinned to the top');
+  return;
+ }
+
+ if(action==='unpin'){
+  chat.pinned=false;
+  saveChats();renderChatList();showToast('Chat unpinned');
+  return;
+ }
 
  if(action==='rename'){
   const name=prompt('Enter a new name for this chat:',chat.title||'New chat');

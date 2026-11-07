@@ -10,19 +10,23 @@
 :root{--bg:#080e1d;--panel:#101a2d;--panel2:#192943;--text:#f3f6ff;--muted:#93a2bb;--blue:#3985ff;--border:#25334b}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-button,textarea{font:inherit}button{cursor:pointer}
+button,textarea,input{font:inherit}button{cursor:pointer}
 .app{display:flex;height:100dvh;overflow:hidden}
 .sidebar{width:270px;background:#0b1425;border-right:1px solid var(--border);padding:17px;display:flex;flex-direction:column;flex-shrink:0;z-index:20}
 .brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;margin:5px 0 25px}
 .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#1677ff,#64c4ff);display:grid;place-items:center;color:white;font-size:22px;font-weight:900}
 .newchat{background:var(--blue);border:0;color:white;padding:13px;border-radius:12px;font-weight:700}
 .sideheading{font-size:12px;color:var(--muted);margin:25px 5px 10px}
+.searchbox{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:white;outline:none;margin-bottom:12px;font-size:13px}
+.searchbox:focus{border-color:var(--blue)}
+.searchbox::placeholder{color:#8192ad}
 .chatlist{overflow:auto;flex:1}
 .chatrow{display:flex;align-items:center;gap:4px;margin-bottom:5px}
 .chatitem{flex:1;min-width:0;padding:11px;border-radius:9px;color:#cbd6e9;cursor:pointer;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chatitem:hover,.chatitem.active{background:var(--panel2)}
 .chatmore{background:transparent;border:0;color:#aabbd3;font-size:19px;padding:7px;border-radius:8px}
 .chatmore:hover{background:var(--panel2)}
+.no-results{color:var(--muted);font-size:13px;padding:12px 8px;line-height:1.5}
 .sidebottom{border-top:1px solid var(--border);padding-top:12px;color:var(--muted);font-size:13px;display:grid;gap:8px}
 .sideaction{background:var(--panel);border:1px solid var(--border);color:#dce7fb;padding:10px;border-radius:9px;text-align:left}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
@@ -96,6 +100,7 @@ button,textarea{font:inherit}button{cursor:pointer}
  <div class="brand"><div class="logo">N</div>NOVA AI</div>
  <button class="newchat" id="newChat">＋ New Chat</button>
  <div class="sideheading">RECENT CHATS</div>
+ <input class="searchbox" id="chatSearch" type="search" placeholder="🔍 Search conversations..." autocomplete="off">
  <div class="chatlist" id="chatList"></div>
  <div class="sidebottom">
   <button class="sideaction" id="exportAll">📤 Export all chats</button>
@@ -195,9 +200,33 @@ function showWelcome(){
  messages.appendChild(w);
 }
 
+/* CHAT SEARCH */
 function renderChatList(){
- $('chatList').innerHTML='';
- chats.forEach(chat=>{
+ const list=$('chatList');
+ list.innerHTML='';
+
+ const query=$('chatSearch').value.trim().toLowerCase();
+
+ const filteredChats=chats.filter(chat=>{
+  if(!query)return true;
+
+  const title=(chat.title||'New chat').toLowerCase();
+  const content=(chat.items||[]).map(item=>
+   (item.text||'')+' '+(item.fileName||'')
+  ).join(' ').toLowerCase();
+
+  return title.includes(query)||content.includes(query);
+ });
+
+ if(!filteredChats.length){
+  const empty=document.createElement('div');
+  empty.className='no-results';
+  empty.textContent=query?'No conversations found. Try another word.':'No conversations yet.';
+  list.appendChild(empty);
+  return;
+ }
+
+ filteredChats.forEach(chat=>{
   const row=document.createElement('div');
   row.className='chatrow';
 
@@ -223,9 +252,11 @@ function renderChatList(){
   };
 
   row.append(el,more);
-  $('chatList').appendChild(row);
+  list.appendChild(row);
  });
 }
+
+$('chatSearch').addEventListener('input',renderChatList);
 
 function renderMessages(){
  closeMessageMenu();

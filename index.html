@@ -7,98 +7,237 @@
 <meta name="theme-color" content="#080e1d">
 <title>NOVA AI</title>
 <style>
-:root{--bg:#080e1d;--panel:#101a2d;--panel2:#192943;--text:#f3f6ff;--muted:#93a2bb;--blue:#3985ff;--border:#25334b}
+:root{
+ --bg:#080e1d;
+ --panel:#101a2d;
+ --panel2:#192943;
+ --text:#f3f6ff;
+ --muted:#93a2bb;
+ --blue:#3985ff;
+ --border:#25334b;
+ --bubble-user:#173c70;
+ --code-bg:#070d18;
+ --top-sidebar:#0b1425;
+ --composer-border:#34445f;
+ --font-scale:1;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-button,textarea,input{font:inherit}button{cursor:pointer}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Arial,sans-serif;font-size:calc(16px * var(--font-scale));
+}
+button,textarea,input,select{font:inherit}
+button{cursor:pointer}
 .app{display:flex;height:100dvh;overflow:hidden}
-.sidebar{width:270px;background:#0b1425;border-right:1px solid var(--border);padding:17px;display:flex;flex-direction:column;flex-shrink:0;z-index:20}
+.sidebar{
+ width:270px;background:var(--top-sidebar);
+ border-right:1px solid var(--border);padding:17px;
+ display:flex;flex-direction:column;flex-shrink:0;z-index:20
+}
 .brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;margin:5px 0 25px}
-.logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#1677ff,#64c4ff);display:grid;place-items:center;color:white;font-size:22px;font-weight:900}
+.logo{
+ width:36px;height:36px;border-radius:12px;
+ background:linear-gradient(135deg,#1677ff,#64c4ff);
+ display:grid;place-items:center;color:white;font-size:22px;font-weight:900
+}
 .newchat{background:var(--blue);border:0;color:white;padding:13px;border-radius:12px;font-weight:700}
 .sideheading{font-size:12px;color:var(--muted);margin:20px 5px 10px}
-.searchbox{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:white;outline:none;margin-bottom:12px;font-size:13px}
+.searchbox{
+ width:100%;background:var(--panel);border:1px solid var(--border);
+ border-radius:10px;padding:11px 12px;color:var(--text);
+ outline:none;margin-bottom:12px;font-size:13px
+}
 .searchbox:focus{border-color:var(--blue)}
-.searchbox::placeholder{color:#8192ad}
+.searchbox::placeholder{color:var(--muted)}
 .chatlist{overflow:auto;flex:1;min-height:80px}
 .chatrow{display:flex;align-items:center;gap:4px;margin-bottom:5px}
-.chatitem{flex:1;min-width:0;padding:11px;border-radius:9px;color:#cbd6e9;cursor:pointer;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chatitem{
+ flex:1;min-width:0;padding:11px;border-radius:9px;
+ color:var(--text);cursor:pointer;font-size:14px;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
 .chatitem:hover,.chatitem.active{background:var(--panel2)}
-.chatmore{background:transparent;border:0;color:#aabbd3;font-size:19px;padding:7px;border-radius:8px}
-.chatmore:hover{background:var(--panel2)}
+.chatmore,.folder-options{
+ background:transparent;border:0;color:var(--muted);
+ font-size:19px;padding:7px;border-radius:8px
+}
+.chatmore:hover,.folder-options:hover{background:var(--panel2)}
 .no-results{color:var(--muted);font-size:13px;padding:12px 8px;line-height:1.5}
-.sidebottom{border-top:1px solid var(--border);padding-top:12px;color:var(--muted);font-size:13px;display:grid;gap:8px}
-.sideaction{background:var(--panel);border:1px solid var(--border);color:#dce7fb;padding:10px;border-radius:9px;text-align:left}
+.sidebottom{
+ border-top:1px solid var(--border);padding-top:12px;
+ color:var(--muted);font-size:13px;display:grid;gap:8px
+}
+.sideaction{
+ background:var(--panel);border:1px solid var(--border);
+ color:var(--text);padding:10px;border-radius:9px;text-align:left
+}
 .folder-area{margin-bottom:8px}
 .folder-heading{display:flex;align-items:center;justify-content:space-between}
 .folder-heading button{background:transparent;border:0;color:#9bb9e8;font-size:19px;padding:3px 8px}
 .folder-list{display:grid;gap:4px;max-height:180px;overflow-y:auto}
 .folder-row{display:flex;align-items:center;gap:5px}
-.folder-filter{flex:1;min-width:0;text-align:left;background:transparent;border:0;color:#cbd6e9;padding:9px;border-radius:8px;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.folder-filter{
+ flex:1;min-width:0;text-align:left;background:transparent;border:0;
+ color:var(--text);padding:9px;border-radius:8px;font-size:13px;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
 .folder-filter:hover,.folder-filter.active{background:var(--panel2)}
 .folder-count{color:var(--muted);font-size:11px;margin-right:5px}
-.folder-options{background:transparent;border:0;color:#aabbd3;padding:7px;border-radius:7px}
-.folder-options:hover{background:var(--panel2)}
 .main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
-.topbar{height:60px;display:flex;align-items:center;padding:0 17px;border-bottom:1px solid var(--border);gap:13px;flex-shrink:0}
-.menu{background:none;border:0;color:white;font-size:23px}
-.topname{font-weight:700}.status{margin-left:auto;color:#7e9bc4;font-size:12px}
+.topbar{
+ height:60px;display:flex;align-items:center;padding:0 17px;
+ border-bottom:1px solid var(--border);gap:13px;flex-shrink:0
+}
+.menu{background:none;border:0;color:var(--text);font-size:23px}
+.topname{font-weight:700}
+.status{margin-left:auto;color:#7e9bc4;font-size:12px}
 .messages{flex:1;overflow-y:auto;padding:25px 18px 30px}
 .welcome{max-width:720px;margin:13vh auto 0;text-align:center}
-.welcome h1{font-size:32px;margin-bottom:10px}.welcome p{color:var(--muted)}
+.welcome h1{font-size:32px;margin-bottom:10px}
+.welcome p{color:var(--muted)}
 .suggestions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:28px}
-.suggestions button{background:var(--panel);border:1px solid var(--border);color:#dce7fb;padding:11px 14px;border-radius:12px}
+.suggestions button{
+ background:var(--panel);border:1px solid var(--border);
+ color:var(--text);padding:11px 14px;border-radius:12px
+}
 .message{max-width:850px;margin:0 auto 25px;display:flex;gap:12px;align-items:flex-start}
 .message.user{flex-direction:row-reverse}
-.avatar{width:31px;height:31px;border-radius:10px;background:var(--panel2);display:grid;place-items:center;flex-shrink:0;font-size:14px}
-.message.assistant .avatar{background:#174b9a}
-.bubble{max-width:min(100%,720px);padding:13px 16px;border-radius:15px;background:var(--panel);line-height:1.65;overflow-wrap:anywhere}
-.message.user .bubble{background:#173c70}
-.message-content p{margin:0 0 12px}.message-content p:last-child{margin-bottom:0}
+.avatar{
+ width:31px;height:31px;border-radius:10px;background:var(--panel2);
+ display:grid;place-items:center;flex-shrink:0;font-size:14px
+}
+.message.assistant .avatar{background:#174b9a;color:white}
+.bubble{
+ max-width:min(100%,720px);padding:13px 16px;border-radius:15px;
+ background:var(--panel);line-height:1.65;overflow-wrap:anywhere
+}
+.message.user .bubble{background:var(--bubble-user)}
+.message-content p{margin:0 0 12px}
+.message-content p:last-child{margin-bottom:0}
 .message-content h1,.message-content h2,.message-content h3{line-height:1.3;margin:18px 0 9px}
-.message-content h1{font-size:1.5em}.message-content h2{font-size:1.3em}.message-content h3{font-size:1.12em}
+.message-content h1{font-size:1.5em}
+.message-content h2{font-size:1.3em}
+.message-content h3{font-size:1.12em}
 .message-content ul,.message-content ol{padding-left:24px}
 .message-content li{margin:5px 0}
-.message-content blockquote{border-left:3px solid var(--blue);margin:12px 0;padding:5px 12px;color:#bdcce3}
+.message-content blockquote{border-left:3px solid var(--blue);margin:12px 0;padding:5px 12px;color:var(--muted)}
 .message-content a{color:#79b4ff}
-.message-content code{background:#081120;padding:2px 5px;border-radius:5px;font-size:.9em}
-.codebox{background:#070d18;border:1px solid var(--border);border-radius:10px;margin:12px 0;overflow:hidden}
+.message-content code{background:var(--code-bg);padding:2px 5px;border-radius:5px;font-size:.9em}
+.codebox{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;margin:12px 0;overflow:hidden}
 .codehead{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;color:var(--muted);font-size:12px;border-bottom:1px solid var(--border)}
-.codehead button{background:#1b2a42;border:0;color:white;padding:5px 9px;border-radius:6px}
+.codehead button{background:var(--panel2);border:0;color:var(--text);padding:5px 9px;border-radius:6px}
 .codebox pre{padding:13px;margin:0;overflow-x:auto;white-space:pre}
 .message-content table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
-.message-content th,.message-content td{border:1px solid #34435b;padding:8px;text-align:left}
-.message-content th{background:#1b2a42}
+.message-content th,.message-content td{border:1px solid var(--border);padding:8px;text-align:left}
+.message-content th{background:var(--panel2)}
 .composer-area{padding:12px 16px 18px;background:linear-gradient(transparent,var(--bg) 20%);flex-shrink:0}
-.composer{max-width:850px;margin:auto;background:var(--panel);border:1px solid #34445f;border-radius:17px;padding:10px;display:flex;align-items:flex-end;gap:8px}
-.composer textarea{flex:1;resize:none;max-height:150px;min-height:40px;background:transparent;border:0;outline:0;color:white;padding:10px}
-.toolbtn{background:var(--panel2);border:0;color:white;border-radius:10px;padding:10px;font-size:18px}
+.composer{
+ max-width:850px;margin:auto;background:var(--panel);
+ border:1px solid var(--composer-border);border-radius:17px;
+ padding:10px;display:flex;align-items:flex-end;gap:8px
+}
+.composer textarea{
+ flex:1;resize:none;max-height:150px;min-height:40px;
+ background:transparent;border:0;outline:0;color:var(--text);padding:10px
+}
+.toolbtn{background:var(--panel2);border:0;color:var(--text);border-radius:10px;padding:10px}
 .sendbtn{background:var(--blue);border:0;color:white;border-radius:10px;padding:11px 15px;font-weight:700}
-.disclaimer{text-align:center;color:#71829c;font-size:11px;margin-top:9px}
-.attachmenu{display:none;position:absolute;bottom:95px;left:18px;background:#17243a;border:1px solid var(--border);padding:7px;border-radius:12px;z-index:30;box-shadow:0 8px 30px #0008}
+.disclaimer{text-align:center;color:var(--muted);font-size:11px;margin-top:9px}
+.attachmenu{
+ display:none;position:absolute;bottom:95px;left:18px;background:var(--panel2);
+ border:1px solid var(--border);padding:7px;border-radius:12px;z-index:30
+}
 .attachmenu.show{display:grid;gap:5px}
-.attachmenu button{background:none;border:0;color:white;text-align:left;padding:11px;border-radius:8px}
-.attachmenu button:hover{background:#263956}
-.preview{max-width:850px;margin:0 auto 8px;display:none;background:var(--panel);padding:9px;border-radius:10px;color:#cbd6e9;font-size:13px}
+.attachmenu button{background:none;border:0;color:var(--text);text-align:left;padding:11px;border-radius:8px}
+.attachmenu button:hover{background:var(--panel)}
+.preview{max-width:850px;margin:0 auto 8px;display:none;background:var(--panel);padding:9px;border-radius:10px;color:var(--text);font-size:13px}
 .preview img{max-width:90px;max-height:75px;object-fit:cover;border-radius:7px;vertical-align:middle;margin-right:8px}
 .thinking{color:#9bb9e8;font-size:13px}
 .dots span{animation:blink 1.2s infinite;opacity:.2}
-.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
 @keyframes blink{50%{opacity:1}}
-.message-menu,.chat-actions,.folder-actions{display:none;position:fixed;z-index:1000;background:#192943;border:1px solid #405574;border-radius:12px;padding:6px;min-width:165px;box-shadow:0 12px 35px #0009}
+.message-menu,.chat-actions,.folder-actions{
+ display:none;position:fixed;z-index:1000;background:var(--panel2);
+ border:1px solid var(--border);border-radius:12px;padding:6px;
+ min-width:165px;box-shadow:0 12px 35px #0009
+}
 .message-menu.show,.chat-actions.show,.folder-actions.show{display:grid}
-.message-menu button,.chat-actions button,.folder-actions button{border:0;background:transparent;color:white;text-align:left;padding:11px;border-radius:8px;font-size:14px}
-.message-menu button:hover,.chat-actions button:hover,.folder-actions button:hover{background:#2a4162}
+.message-menu button,.chat-actions button,.folder-actions button{
+ border:0;background:transparent;color:var(--text);text-align:left;
+ padding:11px;border-radius:8px;font-size:14px
+}
+.message-menu button:hover,.chat-actions button:hover,.folder-actions button:hover{background:var(--panel)}
 .chat-actions{z-index:1001;min-width:190px}
 .folder-actions{z-index:1002;min-width:175px}
-.toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#203450;color:white;padding:10px 16px;border-radius:20px;font-size:13px;z-index:1100;display:none}
+.toast{
+ position:fixed;bottom:95px;left:50%;transform:translateX(-50%);
+ background:var(--panel2);color:var(--text);padding:10px 16px;
+ border-radius:20px;font-size:13px;z-index:1100;display:none
+}
 .overlay{display:none}
+
+/* SETTINGS */
+.settings-modal{
+ display:none;position:fixed;inset:0;z-index:2000;
+ background:#0009;align-items:center;justify-content:center;padding:15px
+}
+.settings-modal.show{display:flex}
+.settings-panel{
+ width:100%;max-width:480px;max-height:90dvh;overflow-y:auto;
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:18px;padding:20px;box-shadow:0 20px 60px #0008
+}
+.settings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.settings-header h2{margin:0;font-size:21px}
+.close-settings{background:transparent;border:0;color:var(--text);font-size:25px}
+.setting-group{margin-bottom:22px}
+.setting-group label{display:block;font-weight:700;margin-bottom:9px}
+.setting-description{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.5}
+.setting-select,.setting-textarea{
+ width:100%;background:var(--bg);border:1px solid var(--border);
+ color:var(--text);padding:12px;border-radius:10px;outline:none
+}
+.setting-select:focus,.setting-textarea:focus{border-color:var(--blue)}
+.setting-textarea{min-height:110px;resize:vertical;line-height:1.5}
+.save-settings{
+ width:100%;background:var(--blue);color:white;border:0;
+ padding:13px;border-radius:10px;font-weight:700
+}
+.reset-settings{
+ width:100%;background:transparent;color:var(--muted);
+ border:1px solid var(--border);padding:11px;border-radius:10px;margin-top:9px
+}
+
+/* LIGHT THEME */
+body.light-theme{
+ --bg:#f4f7fc;
+ --panel:#ffffff;
+ --panel2:#e7edf7;
+ --text:#17243a;
+ --muted:#64748b;
+ --border:#d4deec;
+ --bubble-user:#dceaff;
+ --code-bg:#edf2f9;
+ --top-sidebar:#edf2f9;
+ --composer-border:#cbd6e5;
+}
+body.light-theme .message.assistant .avatar{background:#d9e8ff;color:#174b9a}
+body.light-theme .message-content blockquote{color:#53647d}
+body.light-theme .message-content a{color:#1763c5}
+body.light-theme .status{color:#426da8}
+body.light-theme .thinking{color:#426da8}
+body.light-theme .settings-modal{background:#0005}
+body.light-theme .settings-panel{box-shadow:0 20px 60px #0002}
+
 @media(max-width:700px){
-.sidebar{position:absolute;top:0;bottom:0;left:0;transform:translateX(-105%);transition:transform .25s;box-shadow:10px 0 30px #0008}
-.sidebar.open{transform:translateX(0)}
-.overlay.show{display:block;position:absolute;inset:0;background:#0008;z-index:15}
-.messages{padding:20px 12px}.welcome{margin-top:12vh}
-.welcome h1{font-size:27px}.composer-area{padding:9px 10px 13px}
+ .sidebar{position:absolute;top:0;bottom:0;left:0;transform:translateX(-105%);transition:transform .25s;box-shadow:10px 0 30px #0008}
+ .sidebar.open{transform:translateX(0)}
+ .overlay.show{display:block;position:absolute;inset:0;background:#0008;z-index:15}
+ .messages{padding:20px 12px}
+ .welcome{margin-top:12vh}
+ .welcome h1{font-size:27px}
+ .composer-area{padding:9px 10px 13px}
 }
 </style>
 </head>
@@ -106,19 +245,20 @@ button,textarea,input{font:inherit}button{cursor:pointer}
 <div class="app">
 <aside class="sidebar" id="sidebar">
  <div class="brand"><div class="logo">N</div>NOVA AI</div>
- <button class="newchat" id="newChat">＋ New Chat</button>
+ <button class="newchat" id="newChat">New Chat</button>
 
  <div class="folder-area">
-  <div class="sideheading folder-heading">FOLDERS <button id="addFolder" title="Create folder">＋</button></div>
+  <div class="sideheading folder-heading">FOLDERS <button id="addFolder" title="Create folder">+</button></div>
   <div class="folder-list" id="folderList"></div>
  </div>
 
  <div class="sideheading">RECENT CHATS</div>
- <input class="searchbox" id="chatSearch" type="search" placeholder="🔍 Search conversations..." autocomplete="off">
+ <input class="searchbox" id="chatSearch" type="search" placeholder="Search conversations..." autocomplete="off">
  <div class="chatlist" id="chatList"></div>
  <div class="sidebottom">
-  <button class="sideaction" id="exportAll">📤 Export all chats</button>
-  <button class="sideaction" id="clearAll">🗑️ Clear all chats</button>
+  <button class="sideaction" id="settingsBtn">Settings</button>
+  <button class="sideaction" id="exportAll">Export all chats</button>
+  <button class="sideaction" id="clearAll">Clear all chats</button>
   <div>NOVA AI · Your AI. Your World.</div>
  </div>
 </aside>
@@ -143,24 +283,64 @@ button,textarea,input{font:inherit}button{cursor:pointer}
  <div class="composer-area">
   <div class="preview" id="preview"></div>
   <div class="composer">
-   <button class="toolbtn" id="attachBtn" title="Attach">＋</button>
+   <button class="toolbtn" id="attachBtn" title="Attach">+</button>
    <textarea id="input" rows="1" placeholder="Message NOVA AI..."></textarea>
-   <button class="toolbtn" id="micBtn" title="Voice typing">🎙</button>
-   <button class="sendbtn" id="sendBtn">Send ↑</button>
+   <button class="toolbtn" id="micBtn" title="Voice typing">Voice</button>
+   <button class="sendbtn" id="sendBtn">Send</button>
   </div>
   <div class="disclaimer">NOVA AI can make mistakes. Check important information.</div>
  </div>
  <div class="attachmenu" id="attachMenu">
-  <button id="cameraBtn">📷 Camera</button>
-  <button id="photoBtn">🖼 Photos</button>
-  <button id="fileBtn">📁 Files</button>
+  <button id="cameraBtn">Camera</button>
+  <button id="photoBtn">Photos</button>
+  <button id="fileBtn">Files</button>
  </div>
 </main>
 </div>
+
 <div class="message-menu" id="messageMenu"></div>
 <div class="chat-actions" id="chatActions"></div>
 <div class="folder-actions" id="folderActions"></div>
 <div class="toast" id="toast"></div>
+
+<div class="settings-modal" id="settingsModal">
+ <div class="settings-panel">
+  <div class="settings-header">
+   <h2>Personalization Settings</h2>
+   <button class="close-settings" id="closeSettings" aria-label="Close settings">×</button>
+  </div>
+
+  <div class="setting-group">
+   <label for="themeSetting">Appearance</label>
+   <p class="setting-description">Choose how NOVA AI looks on your device.</p>
+   <select class="setting-select" id="themeSetting">
+    <option value="system">System Default</option>
+    <option value="dark">Dark Mode</option>
+    <option value="light">Light Mode</option>
+   </select>
+  </div>
+
+  <div class="setting-group">
+   <label for="fontSetting">Font Size</label>
+   <p class="setting-description">Adjust the text size across NOVA AI.</p>
+   <select class="setting-select" id="fontSetting">
+    <option value="small">Small</option>
+    <option value="medium">Medium</option>
+    <option value="large">Large</option>
+   </select>
+  </div>
+
+  <div class="setting-group">
+   <label for="instructionsSetting">Custom Instructions</label>
+   <p class="setting-description">Tell NOVA how you prefer responses. These instructions are saved locally and are ready for a future AI connection.</p>
+   <textarea class="setting-textarea" id="instructionsSetting" placeholder="Example: Explain things simply and use short answers."></textarea>
+  </div>
+
+  <button class="save-settings" id="saveSettings">Save Settings</button>
+  <button class="reset-settings" id="resetSettings">Reset Settings</button>
+ </div>
+</div>
+
 <input hidden type="file" id="cameraInput" accept="image/*" capture="environment">
 <input hidden type="file" id="photoInput" accept="image/*">
 <input hidden type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xls,.xlsx,.ppt,.pptx">
@@ -169,6 +349,7 @@ button,textarea,input{font:inherit}button{cursor:pointer}
 const $=id=>document.getElementById(id);
 const messages=$('messages'),input=$('input');
 const STORAGE_KEY='nova_ai_saved_chats_v1';
+const SETTINGS_KEY='nova_ai_personal_settings_v1';
 const DEFAULT_FOLDERS=['Work','School','Personal'];
 
 let chats=[];
@@ -180,12 +361,87 @@ let holdTimer=null,menuIndex=null,toastTimer=null;
 let selectedChatId=null,selectedFolderId=null;
 let activeFolder='all';
 
+let settings={
+ theme:'system',
+ fontSize:'medium',
+ instructions:''
+};
+
+const systemTheme=window.matchMedia('(prefers-color-scheme: dark)');
+
+function applyTheme(){
+ const theme=settings.theme;
+ const isLight=theme==='light'||(theme==='system'&&!systemTheme.matches);
+ document.body.classList.toggle('light-theme',isLight);
+ $('themeSetting').value=theme;
+ $('fontSetting').value=settings.fontSize;
+ $('instructionsSetting').value=settings.instructions;
+ const scales={small:0.9,medium:1,large:1.12};
+ document.documentElement.style.setProperty('--font-scale',scales[settings.fontSize]||1);
+}
+
+function loadSettings(){
+ try{
+  const saved=localStorage.getItem(SETTINGS_KEY);
+  if(saved){
+   const parsed=JSON.parse(saved);
+   if(parsed&&typeof parsed==='object'){
+    settings.theme=['system','dark','light'].includes(parsed.theme)?parsed.theme:'system';
+    settings.fontSize=['small','medium','large'].includes(parsed.fontSize)?parsed.fontSize:'medium';
+    settings.instructions=typeof parsed.instructions==='string'?parsed.instructions:'';
+   }
+  }
+ }catch(error){console.warn('Could not load settings:',error)}
+ applyTheme();
+}
+
+function saveSettings(){
+ settings.theme=$('themeSetting').value;
+ settings.fontSize=$('fontSetting').value;
+ settings.instructions=$('instructionsSetting').value.trim();
+ try{
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));
+  applyTheme();
+  closeSettings();
+  showToast('Settings saved');
+ }catch(error){showToast('Could not save settings')}
+}
+
+function openSettings(){
+ $('settingsModal').classList.add('show');
+ $('themeSetting').value=settings.theme;
+ $('fontSetting').value=settings.fontSize;
+ $('instructionsSetting').value=settings.instructions;
+ closeSidebar();
+}
+
+function closeSettings(){
+ $('settingsModal').classList.remove('show');
+}
+
+$('settingsBtn').onclick=openSettings;
+$('closeSettings').onclick=closeSettings;
+$('saveSettings').onclick=saveSettings;
+$('resetSettings').onclick=()=>{
+ if(!confirm('Reset all personalization settings?'))return;
+ settings={theme:'system',fontSize:'medium',instructions:''};
+ localStorage.removeItem(SETTINGS_KEY);
+ applyTheme();
+ closeSettings();
+ showToast('Settings reset');
+};
+systemTheme.addEventListener('change',()=>{
+ if(settings.theme==='system')applyTheme();
+});
+$('settingsModal').addEventListener('click',e=>{
+ if(e.target===$('settingsModal'))closeSettings();
+});
+
+/* CHAT STORAGE */
 function saveChats(){
  try{
   localStorage.setItem(STORAGE_KEY,JSON.stringify({
-   chats:chats,
-   folders:folders,
-   currentChatId:currentChat?currentChat.id:null
+   chats:chats,folders:folders,currentChatId:currentChat?currentChat.id:null
   }));
  }catch(error){console.warn('NOVA could not save chats:',error)}
 }
@@ -202,9 +458,7 @@ function loadChats(){
    if(!('folderId' in chat))chat.folderId=null;
   });
   folders=Array.isArray(data.folders)?data.folders:[];
-  if(!folders.length){
-   folders=DEFAULT_FOLDERS.map((name,i)=>({id:'folder-'+i,name}));
-  }
+  if(!folders.length)folders=DEFAULT_FOLDERS.map((name,i)=>({id:'folder-'+i,name}));
   currentChat=chats.find(chat=>String(chat.id)===String(data.currentChatId))||chats[0]||null;
   return chats.length>0;
  }catch(error){chats=[];folders=[];currentChat=null;return false}
@@ -220,11 +474,7 @@ function ensureFolders(){
 function newChat(){
  currentChat={id:Date.now(),title:'New chat',items:[],pinned:false,folderId:null};
  chats.unshift(currentChat);
- saveChats();
- renderFolders();
- renderChatList();
- showWelcome();
- closeSidebar();
+ saveChats();renderFolders();renderChatList();showWelcome();closeSidebar();
 }
 
 function showWelcome(){
@@ -237,48 +487,27 @@ function showWelcome(){
 
 /* FOLDERS */
 function renderFolders(){
- const list=$('folderList');
- list.innerHTML='';
-
- const all=document.createElement('div');
- all.className='folder-row';
+ const list=$('folderList');list.innerHTML='';
+ const all=document.createElement('div');all.className='folder-row';
  const allBtn=document.createElement('button');
  allBtn.className='folder-filter'+(activeFolder==='all'?' active':'');
- allBtn.textContent='💬 All chats';
+ allBtn.textContent='All chats';
  allBtn.onclick=()=>{activeFolder='all';renderFolders();renderChatList()};
- const allCount=document.createElement('span');
- allCount.className='folder-count';
- allCount.textContent=chats.length;
- all.append(allBtn,allCount);
- list.appendChild(all);
+ const allCount=document.createElement('span');allCount.className='folder-count';allCount.textContent=chats.length;
+ all.append(allBtn,allCount);list.appendChild(all);
 
  folders.forEach(folder=>{
-  const row=document.createElement('div');
-  row.className='folder-row';
-
+  const row=document.createElement('div');row.className='folder-row';
   const btn=document.createElement('button');
   btn.className='folder-filter'+(activeFolder===String(folder.id)?' active':'');
-  btn.textContent='📁 '+folder.name;
-  btn.onclick=()=>{
-   activeFolder=String(folder.id);
-   renderFolders();renderChatList();
-  };
-
-  const count=document.createElement('span');
-  count.className='folder-count';
+  btn.textContent=folder.name;
+  btn.onclick=()=>{activeFolder=String(folder.id);renderFolders();renderChatList()};
+  const count=document.createElement('span');count.className='folder-count';
   count.textContent=chats.filter(c=>String(c.folderId)===String(folder.id)).length;
-
-  const more=document.createElement('button');
-  more.className='folder-options';
-  more.textContent='⋮';
-  more.title='Folder options';
-  more.onclick=e=>{
-   e.stopPropagation();
-   openFolderActions(folder.id,e.currentTarget);
-  };
-
-  row.append(btn,count,more);
-  list.appendChild(row);
+  const more=document.createElement('button');more.className='folder-options';
+  more.textContent='...';more.title='Folder options';
+  more.onclick=e=>{e.stopPropagation();openFolderActions(folder.id,e.currentTarget)};
+  row.append(btn,count,more);list.appendChild(row);
  });
 }
 
@@ -291,41 +520,30 @@ function createFolder(){
   showToast('A folder with that name already exists');return;
  }
  const folder={id:'folder-'+Date.now(),name:clean.slice(0,35)};
- folders.push(folder);
- activeFolder=String(folder.id);
- saveChats();renderFolders();renderChatList();
- showToast('Folder created');
+ folders.push(folder);activeFolder=String(folder.id);
+ saveChats();renderFolders();renderChatList();showToast('Folder created');
 }
 
 function closeFolderActions(){
- $('folderActions').classList.remove('show');
- selectedFolderId=null;
+ $('folderActions').classList.remove('show');selectedFolderId=null;
 }
 
 function openFolderActions(folderId,button){
- closeFolderActions();
- selectedFolderId=folderId;
- const folder=folders.find(f=>String(f.id)===String(folderId));
- if(!folder)return;
- const menu=$('folderActions');
- menu.innerHTML='';
- [['rename','✏️ Rename folder'],['delete','🗑️ Delete folder']].forEach(([action,label])=>{
-  const b=document.createElement('button');
-  b.textContent=label;b.dataset.action=action;
-  menu.appendChild(b);
+ closeFolderActions();selectedFolderId=folderId;
+ const folder=folders.find(f=>String(f.id)===String(folderId));if(!folder)return;
+ const menu=$('folderActions');menu.innerHTML='';
+ [['rename','Rename folder'],['delete','Delete folder']].forEach(([action,label])=>{
+  const b=document.createElement('button');b.textContent=label;b.dataset.action=action;menu.appendChild(b);
  });
  menu.classList.add('show');
- const rect=button.getBoundingClientRect();
- const w=menu.offsetWidth,h=menu.offsetHeight;
+ const rect=button.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;
  menu.style.left=Math.max(8,Math.min(rect.left,innerWidth-w-8))+'px';
  menu.style.top=Math.max(8,Math.min(rect.bottom,innerHeight-h-8))+'px';
 }
 
 function performFolderAction(action){
  const folder=folders.find(f=>String(f.id)===String(selectedFolderId));
- closeFolderActions();
- if(!folder)return;
-
+ closeFolderActions();if(!folder)return;
  if(action==='rename'){
   const name=prompt('Enter a new folder name:',folder.name);
   if(name===null)return;
@@ -334,34 +552,26 @@ function performFolderAction(action){
   if(folders.some(f=>f.id!==folder.id&&f.name.toLowerCase()===clean.toLowerCase())){
    showToast('A folder with that name already exists');return;
   }
-  folder.name=clean.slice(0,35);
-  saveChats();renderFolders();showToast('Folder renamed');
+  folder.name=clean.slice(0,35);saveChats();renderFolders();showToast('Folder renamed');
  }
-
  if(action==='delete'){
   if(!confirm('Delete folder "'+folder.name+'"? Chats inside it will be moved to All chats.'))return;
-  chats.forEach(chat=>{
-   if(String(chat.folderId)===String(folder.id))chat.folderId=null;
-  });
+  chats.forEach(chat=>{if(String(chat.folderId)===String(folder.id))chat.folderId=null});
   folders=folders.filter(f=>String(f.id)!==String(folder.id));
   if(activeFolder===String(folder.id))activeFolder='all';
-  saveChats();renderFolders();renderChatList();
-  showToast('Folder deleted');
+  saveChats();renderFolders();renderChatList();showToast('Folder deleted');
  }
 }
 
 $('addFolder').onclick=createFolder;
 $('folderActions').addEventListener('click',e=>{
- const b=e.target.closest('[data-action]');
- if(b)performFolderAction(b.dataset.action);
+ const b=e.target.closest('[data-action]');if(b)performFolderAction(b.dataset.action);
 });
 
-/* CHAT SEARCH + PINNED CHATS + FOLDER FILTER */
+/* SEARCH, PINNED CHATS AND FOLDER FILTER */
 function renderChatList(){
- const list=$('chatList');
- list.innerHTML='';
+ const list=$('chatList');list.innerHTML='';
  const query=$('chatSearch').value.trim().toLowerCase();
-
  const filteredChats=chats.filter(chat=>{
   if(activeFolder!=='all'&&String(chat.folderId)!==String(activeFolder))return false;
   if(!query)return true;
@@ -369,33 +579,19 @@ function renderChatList(){
   const content=(chat.items||[]).map(item=>(item.text||'')+' '+(item.fileName||'')).join(' ').toLowerCase();
   return title.includes(query)||content.includes(query);
  });
-
- filteredChats.sort((a,b)=>{
-  if(a.pinned&&!b.pinned)return -1;
-  if(!a.pinned&&b.pinned)return 1;
-  return 0;
- });
-
+ filteredChats.sort((a,b)=>a.pinned===b.pinned?0:(a.pinned?-1:1));
  if(!filteredChats.length){
-  const empty=document.createElement('div');
-  empty.className='no-results';
+  const empty=document.createElement('div');empty.className='no-results';
   empty.textContent=query?'No conversations found. Try another word.':(activeFolder==='all'?'No conversations yet.':'This folder is empty.');
-  list.appendChild(empty);
-  return;
+  list.appendChild(empty);return;
  }
-
  filteredChats.forEach(chat=>{
-  const row=document.createElement('div');
-  row.className='chatrow';
-  const el=document.createElement('div');
-  el.className='chatitem'+(currentChat&&chat.id===currentChat.id?' active':'');
-  el.textContent=(chat.pinned?'📌 ':'')+(chat.title||'New chat');
+  const row=document.createElement('div');row.className='chatrow';
+  const el=document.createElement('div');el.className='chatitem'+(currentChat&&chat.id===currentChat.id?' active':'');
+  el.textContent=(chat.pinned?'Pinned: ':'')+(chat.title||'New chat');
   el.title=chat.title||'New chat';
-  el.onclick=()=>{
-   currentChat=chat;saveChats();renderMessages();renderChatList();closeSidebar();
-  };
-  const more=document.createElement('button');
-  more.className='chatmore';more.textContent='⋮';more.title='Chat options';
+  el.onclick=()=>{currentChat=chat;saveChats();renderMessages();renderChatList();closeSidebar()};
+  const more=document.createElement('button');more.className='chatmore';more.textContent='...';more.title='Chat options';
   more.onclick=e=>{e.stopPropagation();openChatActions(chat.id,e.currentTarget)};
   row.append(el,more);list.appendChild(row);
  });
@@ -403,8 +599,7 @@ function renderChatList(){
 $('chatSearch').addEventListener('input',renderChatList);
 
 function renderMessages(){
- closeMessageMenu();
- messages.innerHTML='';
+ closeMessageMenu();messages.innerHTML='';
  if(!currentChat||!currentChat.items.length){showWelcome();return}
  currentChat.items.forEach((item,index)=>addMessageElement(item,index));
  messages.scrollTop=messages.scrollHeight;
@@ -474,13 +669,14 @@ function addMessageElement(item,index){
  const bubble=document.createElement('div');bubble.className='bubble';
  const content=document.createElement('div');content.className='message-content';
  if(item.role==='assistant')content.innerHTML=renderMarkdown(item.text);else content.textContent=item.text;
- if(item.fileName){const f=document.createElement('div');f.style.marginTop='8px';f.textContent='📎 '+item.fileName;content.appendChild(f)}
+ if(item.fileName){const f=document.createElement('div');f.style.marginTop='8px';f.textContent='Attachment: '+item.fileName;content.appendChild(f)}
  bubble.appendChild(content);body.appendChild(bubble);row.append(avatar,body);messages.appendChild(row);
 }
 
 function addMessage(role,text,fileName){
  const item={role,text,fileName:fileName||''};
- currentChat.items.push(item);addMessageElement(item,currentChat.items.length-1);saveChats();messages.scrollTop=messages.scrollHeight;
+ currentChat.items.push(item);addMessageElement(item,currentChat.items.length-1);
+ saveChats();messages.scrollTop=messages.scrollHeight;
 }
 
 function updateTitle(){
@@ -492,7 +688,7 @@ function updateTitle(){
 
 function showThinking(){
  const row=document.createElement('div');row.className='message assistant';row.id='thinkingRow';
- row.innerHTML='<div class="avatar">N</div><div class="bubble"><div class="thinking">NOVA is thinking <span class="dots"><span>●</span> <span>●</span> <span>●</span></span></div></div>';
+ row.innerHTML='<div class="avatar">N</div><div class="bubble"><div class="thinking">NOVA is thinking <span class="dots"><span>.</span> <span>.</span> <span>.</span></span></div></div>';
  messages.appendChild(row);messages.scrollTop=messages.scrollHeight;
 }
 
@@ -553,13 +749,13 @@ function openChatActions(chatId,button){
  const chat=chats.find(c=>String(c.id)===String(chatId));if(!chat)return;
  const menu=$('chatActions');menu.innerHTML='';
  const options=[
-  [chat.pinned?'unpin':'pin',chat.pinned?'📌 Unpin chat':'📌 Pin chat'],
-  ['move','📁 Move to folder'],
-  ['rename','✏️ Rename chat'],
-  ['export','📤 Export chat'],
-  ['delete','🗑️ Delete chat']
+  [chat.pinned?'unpin':'pin',chat.pinned?'Unpin chat':'Pin chat'],
+  ['move','Move to folder'],['rename','Rename chat'],
+  ['export','Export chat'],['delete','Delete chat']
  ];
- options.forEach(([action,label])=>{const b=document.createElement('button');b.textContent=label;b.dataset.action=action;menu.appendChild(b)});
+ options.forEach(([action,label])=>{
+  const b=document.createElement('button');b.textContent=label;b.dataset.action=action;menu.appendChild(b)
+ });
  menu.classList.add('show');
  const rect=button.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;
  menu.style.left=Math.max(8,Math.min(rect.left,innerWidth-w-8))+'px';
@@ -572,8 +768,8 @@ function moveChatToFolder(chat){
  const answer=prompt('Enter the number of the folder:\n\n'+choices+'\n\nEnter 0 to move to All chats.');
  if(answer===null)return;
  const n=Number(answer);
- if(n===0){chat.folderId=null}
- else if(Number.isInteger(n)&&n>=1&&n<=folders.length){chat.folderId=folders[n-1].id}
+ if(n===0)chat.folderId=null;
+ else if(Number.isInteger(n)&&n>=1&&n<=folders.length)chat.folderId=folders[n-1].id;
  else{showToast('Invalid folder number');return}
  saveChats();renderFolders();renderChatList();showToast(chat.folderId?'Chat moved to folder':'Chat moved to All chats');
 }
@@ -594,7 +790,8 @@ function performChatAction(action){
   if(!confirm('Delete "'+(chat.title||'New chat')+'"? This cannot be undone.'))return;
   chats=chats.filter(c=>String(c.id)!==String(chat.id));
   if(currentChat&&String(currentChat.id)===String(chat.id))currentChat=chats[0]||null;
-  if(!currentChat)newChat();else{saveChats();renderFolders();renderChatList();renderMessages()}
+  if(!currentChat)newChat();
+  else{saveChats();renderFolders();renderChatList();renderMessages()}
   showToast('Chat deleted');
  }
 }
@@ -609,14 +806,19 @@ $('clearAll').onclick=()=>{
  chats=[];currentChat=null;saveChats();newChat();showToast('All chats cleared');
 };
 
+/* MESSAGE MENU */
 function closeMessageMenu(){$('messageMenu').classList.remove('show');menuIndex=null}
 
 function openMessageMenu(row,x,y){
  if(!row||!currentChat)return;
  closeMessageMenu();menuIndex=Number(row.dataset.index);
  const item=currentChat.items[menuIndex],menu=$('messageMenu');menu.innerHTML='';
- const options=item.role==='user'?[['copy','📋 Copy'],['edit','✏️ Edit message']]:[['copy','📋 Copy'],['regenerate','🔄 Regenerate'],['like','👍 Good response'],['dislike','👎 Poor response']];
- options.forEach(([action,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.action=action;menu.appendChild(b)});
+ const options=item.role==='user'?
+  [['copy','Copy'],['edit','Edit message']]:
+  [['copy','Copy'],['regenerate','Regenerate'],['like','Good response'],['dislike','Poor response']];
+ options.forEach(([action,label])=>{
+  const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.action=action;menu.appendChild(b)
+ });
  menu.classList.add('show');
  const w=menu.offsetWidth,h=menu.offsetHeight;
  menu.style.left=Math.max(8,Math.min(x,innerWidth-w-8))+'px';
@@ -627,7 +829,9 @@ function performMenuAction(action){
  if(menuIndex===null||!currentChat)return;
  const index=menuIndex,item=currentChat.items[index];closeMessageMenu();
  if(action==='copy'){copyText(item.text);return}
- if(action==='edit'&&item.role==='user'){input.value=item.text;input.focus();currentChat.items.splice(index);saveChats();renderMessages();return}
+ if(action==='edit'&&item.role==='user'){
+  input.value=item.text;input.focus();currentChat.items.splice(index);saveChats();renderMessages();return
+ }
  if(action==='like'||action==='dislike'){item.feedback=action;saveChats();return}
  if(action==='regenerate'&&item.role==='assistant'){
   if(thinking)return;
@@ -670,9 +874,14 @@ messages.addEventListener('click',async e=>{
  if(b){await copyText(b.closest('.codebox').querySelector('code').textContent);b.textContent='Copied!'}
 });
 
+/* MAIN CONTROLS */
 $('sendBtn').onclick=()=>sendMessage();
-input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
-input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,150)+'px'});
+input.addEventListener('keydown',e=>{
+ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}
+});
+input.addEventListener('input',()=>{
+ input.style.height='auto';input.style.height=Math.min(input.scrollHeight,150)+'px';
+});
 $('newChat').onclick=newChat;
 $('menuBtn').onclick=()=>{
  $('sidebar').classList.toggle('open');$('overlay').classList.toggle('show');
@@ -691,7 +900,7 @@ function setAttachment(file){
  if(file.type.startsWith('image/')){
   const img=document.createElement('img');img.src=URL.createObjectURL(file);preview.appendChild(img);
  }
- preview.appendChild(document.createTextNode('📎 '+file.name+' — ready. Press Send when you want to attach it.'));
+ preview.appendChild(document.createTextNode(file.name+' — ready. Press Send when you want to attach it.'));
 }
 ['cameraInput','photoInput','fileInput'].forEach(id=>$(id).addEventListener('change',e=>setAttachment(e.target.files[0])));
 
@@ -709,15 +918,13 @@ $('micBtn').onclick=()=>{
  rec.start();
 };
 
-/* RESTORE SAVED CHATS AND FOLDERS */
+/* RESTORE SAVED DATA */
+loadSettings();
 ensureFolders();
 if(loadChats()){
- ensureFolders();
- renderFolders();renderChatList();renderMessages();
+ ensureFolders();renderFolders();renderChatList();renderMessages();
 }else{
- ensureFolders();
- newChat();
- renderFolders();
+ ensureFolders();newChat();renderFolders();
 }
 </script>
 </body>
